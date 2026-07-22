@@ -54,6 +54,12 @@ class Exam extends Model
         return $this->hasMany(Submission::class);
     }
 
+    /** New: browsable/hostable instances of this exam (replaces class-gated publishing). */
+    public function sessions(): HasMany
+    {
+        return $this->hasMany(ExamSession::class);
+    }
+
     public function leaderboardEntries(): HasMany
     {
         return $this->hasMany(LeaderboardEntry::class)->orderBy('rank');

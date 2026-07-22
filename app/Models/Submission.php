@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 class Submission extends Model
 {
     protected $fillable = [
-        'exam_id', 'student_id', 'started_at', 'submitted_at', 'status', 'attempt_number',
+        'exam_id', 'exam_session_id', 'student_id', 'started_at', 'submitted_at', 'status', 'attempt_number',
     ];
 
     protected function casts(): array
@@ -24,6 +24,12 @@ class Submission extends Model
     public function exam(): BelongsTo
     {
         return $this->belongsTo(Exam::class);
+    }
+
+    /** New: the specific session join that produced this attempt. */
+    public function examSession(): BelongsTo
+    {
+        return $this->belongsTo(ExamSession::class);
     }
 
     public function student(): BelongsTo

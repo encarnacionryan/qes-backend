@@ -33,7 +33,10 @@ class AuthController extends Controller
 
         $request->session()->regenerate();
 
-        return redirect()->intended(route('dashboard'));
+        $user = Auth::user();
+        $default = $user->role === 'teacher' ? route('dashboard') : route('student.sessions.index');
+
+        return redirect()->intended($default);
     }
 
     public function showRegister()
@@ -47,20 +50,22 @@ class AuthController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'email', 'unique:users,email'],
             'password' => ['required', 'confirmed', 'min:8'],
+            'role' => ['required', 'in:teacher,student'], // PWA update: both roles register here now
         ]);
 
         $user = \App\Models\User::create([
             'name' => $data['name'],
             'email' => $data['email'],
             'password' => bcrypt($data['password']),
-            'role' => 'teacher',
+            'role' => $data['role'],
             // FR-8.1: first teacher becomes the lead teacher.
-            'is_lead_teacher' => ! \App\Models\User::where('role', 'teacher')->exists(),
+            'is_lead_teacher' => $data['role'] === 'teacher'
+                && ! \App\Models\User::where('role', 'teacher')->exists(),
         ]);
 
         Auth::login($user);
 
-        return redirect()->route('dashboard');
+        return redirect($user->role === 'teacher' ? route('dashboard') : route('student.sessions.index'));
     }
 
     public function destroy(Request $request)

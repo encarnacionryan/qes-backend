@@ -13,6 +13,27 @@ use Illuminate\Validation\ValidationException;
  */
 class AuthController extends Controller
 {
+    /** New: student self-registration from the mobile app. */
+    public function register(Request $request)
+    {
+        $data = $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'email', 'unique:users,email'],
+            'password' => ['required', 'confirmed', 'min:8'],
+        ]);
+
+        $user = \App\Models\User::create([
+            'name' => $data['name'],
+            'email' => $data['email'],
+            'password' => Hash::make($data['password']),
+            'role' => 'student',
+        ]);
+
+        $token = $user->createToken('qes-mobile', ['student'])->plainTextToken;
+
+        return response()->json(['user' => $user, 'token' => $token], 201);
+    }
+
     public function login(Request $request)
     {
         $credentials = $request->validate([

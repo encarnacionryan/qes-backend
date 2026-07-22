@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
-use App\Models\Exam;
 use App\Models\Submission;
 use App\Services\GradingService;
 use Illuminate\Http\Request;
@@ -16,25 +15,6 @@ use Illuminate\Http\Request;
  */
 class SubmissionController extends Controller
 {
-    public function start(Request $request, Exam $exam) // FR-4.1, FR-4.4
-    {
-        $studentId = $request->user()->id;
-
-        $existing = Submission::where('exam_id', $exam->id)
-            ->where('student_id', $studentId)
-            ->where('status', '!=', 'in_progress')
-            ->count();
-
-        abort_if($existing > 0 && ! $exam->allow_retake, 422, 'You have already taken this exam.');
-
-        $submission = Submission::firstOrCreate(
-            ['exam_id' => $exam->id, 'student_id' => $studentId, 'status' => 'in_progress'],
-            ['started_at' => now(), 'attempt_number' => $existing + 1]
-        );
-
-        return response()->json($submission);
-    }
-
     public function saveAnswers(Request $request, Submission $submission) // FR-4.5
     {
         $this->authorizeOwnership($submission);
@@ -74,11 +54,11 @@ class SubmissionController extends Controller
         $this->authorizeOwnership($submission);
 
         $exam = $submission->exam;
-        $withinWindow = $exam->show_score_immediately || now()->greaterThan(
-            $exam->classes()->first()?->pivot->closes_at
-        );
+        // Score is released immediately if the exam allows it, or once the
+        // session the student took it in has been closed by the teacher.
+        $released = $exam->show_score_immediately || $submission->examSession->status === 'closed';
 
-        abort_unless($withinWindow, 403, 'Scores are released after the exam window closes.');
+        abort_unless($released, 403, 'Scores are released once the session closes.');
 
         return response()->json($submission->load('score', 'answers'));
     }

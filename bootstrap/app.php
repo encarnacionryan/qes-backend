@@ -21,6 +21,10 @@ return Application::configure(basePath: dirname(__DIR__))
             'role' => \App\Http\Middleware\EnsureUserHasRole::class,
             'lead_teacher' => \App\Http\Middleware\EnsureUserIsLeadTeacher::class,
         ]);
+
+        $middleware->web(append: [
+            \App\Http\Middleware\HandleInertiaRequests::class,
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //

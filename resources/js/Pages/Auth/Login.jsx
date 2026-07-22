@@ -1,100 +1,81 @@
-import Checkbox from '@/Components/Checkbox';
-import InputError from '@/Components/InputError';
-import InputLabel from '@/Components/InputLabel';
-import PrimaryButton from '@/Components/PrimaryButton';
-import TextInput from '@/Components/TextInput';
-import GuestLayout from '@/Layouts/GuestLayout';
-import { Head, Link, useForm } from '@inertiajs/react';
+// resources/js/Pages/Auth/Login.jsx
+//
+// Sprint 1, QES-8/QES-9. One login form for both roles — the backend
+// (Web\AuthController::store) already knows the user's role from the DB
+// and redirects to /dashboard (teacher) or /student/sessions (student)
+// after a successful login, so this page doesn't need a role toggle.
 
-export default function Login({ status, canResetPassword }) {
-    const { data, setData, post, processing, errors, reset } = useForm({
-        email: '',
-        password: '',
-        remember: false,
+import { Head, Link, useForm } from "@inertiajs/react";
+
+export default function Login() {
+    const { data, setData, post, processing, errors } = useForm({
+        email: "",
+        password: "",
     });
 
-    const submit = (e) => {
+    function handleSubmit(e) {
         e.preventDefault();
-
-        post(route('login'), {
-            onFinish: () => reset('password'),
-        });
-    };
+        post("/login");
+    }
 
     return (
-        <GuestLayout>
-            <Head title="Log in" />
+        <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
+            <Head title="Log In" />
 
-            {status && (
-                <div className="mb-4 text-sm font-medium text-green-600">
-                    {status}
-                </div>
-            )}
+            <div className="w-full max-w-sm bg-white rounded-xl shadow p-8">
+                <h1 className="text-2xl font-bold text-[#1F3864] mb-1">Q.E.S</h1>
+                <p className="text-sm text-gray-500 mb-6">Log in to your account</p>
 
-            <form onSubmit={submit}>
-                <div>
-                    <InputLabel htmlFor="email" value="Email" />
-
-                    <TextInput
-                        id="email"
-                        type="email"
-                        name="email"
-                        value={data.email}
-                        className="mt-1 block w-full"
-                        autoComplete="username"
-                        isFocused={true}
-                        onChange={(e) => setData('email', e.target.value)}
-                    />
-
-                    <InputError message={errors.email} className="mt-2" />
-                </div>
-
-                <div className="mt-4">
-                    <InputLabel htmlFor="password" value="Password" />
-
-                    <TextInput
-                        id="password"
-                        type="password"
-                        name="password"
-                        value={data.password}
-                        className="mt-1 block w-full"
-                        autoComplete="current-password"
-                        onChange={(e) => setData('password', e.target.value)}
-                    />
-
-                    <InputError message={errors.password} className="mt-2" />
-                </div>
-
-                <div className="mt-4 block">
-                    <label className="flex items-center">
-                        <Checkbox
-                            name="remember"
-                            checked={data.remember}
-                            onChange={(e) =>
-                                setData('remember', e.target.checked)
-                            }
+                <form onSubmit={handleSubmit} className="space-y-4">
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                            Email
+                        </label>
+                        <input
+                            type="email"
+                            value={data.email}
+                            onChange={(e) => setData("email", e.target.value)}
+                            className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#1F3864]"
+                            autoComplete="email"
+                            autoFocus
                         />
-                        <span className="ms-2 text-sm text-gray-600">
-                            Remember me
-                        </span>
-                    </label>
-                </div>
+                        {errors.email && (
+                            <p className="text-red-600 text-sm mt-1">{errors.email}</p>
+                        )}
+                    </div>
 
-                <div className="mt-4 flex items-center justify-end">
-                    {canResetPassword && (
-                        <Link
-                            href={route('password.request')}
-                            className="rounded-md text-sm text-gray-600 underline hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-                        >
-                            Forgot your password?
-                        </Link>
-                    )}
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                            Password
+                        </label>
+                        <input
+                            type="password"
+                            value={data.password}
+                            onChange={(e) => setData("password", e.target.value)}
+                            className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#1F3864]"
+                            autoComplete="current-password"
+                        />
+                        {errors.password && (
+                            <p className="text-red-600 text-sm mt-1">{errors.password}</p>
+                        )}
+                    </div>
 
-                    <PrimaryButton className="ms-4" disabled={processing}>
-                        Log in
-                    </PrimaryButton>
-                </div>
-            </form>
-        </GuestLayout>
+                    <button
+                        type="submit"
+                        disabled={processing}
+                        className="w-full bg-[#1F3864] text-white rounded-lg py-2 font-semibold disabled:opacity-60"
+                    >
+                        {processing ? "Logging in…" : "Log In"}
+                    </button>
+                </form>
+
+                <p className="text-sm text-gray-500 mt-6 text-center">
+                    Don't have an account?{" "}
+                    <Link href="/register" className="text-[#1F3864] underline">
+                        Register
+                    </Link>
+                </p>
+            </div>
+        </div>
     );
 }

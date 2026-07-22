@@ -81,27 +81,6 @@ class ExamController extends Controller
         return redirect()->route('exams.index')->with('success', 'Exam deleted.');
     }
 
-    public function publish(Request $request, Exam $exam) // FR-3.5
-    {
-        $this->authorizeOwnership($exam);
-
-        $data = $request->validate([
-            'class_ids' => ['required', 'array', 'min:1'],
-            'class_ids.*' => ['exists:school_classes,id'],
-            'opens_at' => ['required', 'date'],
-            'closes_at' => ['required', 'date', 'after:opens_at'],
-        ]);
-
-        $syncData = collect($data['class_ids'])->mapWithKeys(fn ($id) => [
-            $id => ['opens_at' => $data['opens_at'], 'closes_at' => $data['closes_at']],
-        ]);
-
-        $exam->classes()->syncWithoutDetaching($syncData);
-        $exam->update(['status' => 'published']);
-
-        return back()->with('success', 'Exam published.');
-    }
-
     public function duplicate(Exam $exam) // FR-3.7
     {
         $this->authorizeOwnership($exam);
