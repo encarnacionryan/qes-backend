@@ -1,10 +1,3 @@
-// resources/js/Pages/Student/Sessions/Browse.jsx
-//
-// Student's landing page. Backed by Web\Student\SessionController::index,
-// which returns every open ExamSession server-wide (no class filtering —
-// see the exam-session architecture update). Joining a private session
-// prompts for a password inline before submitting.
-
 import { useState } from "react";
 import { Head, useForm } from "@inertiajs/react";
 import AuthenticatedLayout from "../../../Layouts/AuthenticatedLayout";

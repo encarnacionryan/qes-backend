@@ -5,12 +5,6 @@ namespace App\Http\Middleware;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
 
-/**
- * Standard Inertia convention: shares data available on every page
- * without each controller having to pass it explicitly. AuthenticatedLayout
- * (resources/js/Layouts/AuthenticatedLayout.jsx) reads `auth.user` from
- * this via usePage().props.
- */
 class HandleInertiaRequests extends Middleware
 {
     protected $rootView = 'app';

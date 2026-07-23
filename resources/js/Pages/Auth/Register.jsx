@@ -1,9 +1,3 @@
-// resources/js/Pages/Auth/Register.jsx
-//
-// Sprint 1, QES-7. PWA update: registration now includes a role toggle
-// since both teachers and students register through this same app —
-// see Web\AuthController::register, which validates `role` in [teacher, student].
-
 import { Head, Link, useForm } from "@inertiajs/react";
 
 export default function Register() {

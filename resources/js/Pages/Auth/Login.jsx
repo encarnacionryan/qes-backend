@@ -1,10 +1,3 @@
-// resources/js/Pages/Auth/Login.jsx
-//
-// Sprint 1, QES-8/QES-9. One login form for both roles — the backend
-// (Web\AuthController::store) already knows the user's role from the DB
-// and redirects to /dashboard (teacher) or /student/sessions (student)
-// after a successful login, so this page doesn't need a role toggle.
-
 import { Head, Link, useForm } from "@inertiajs/react";
 
 export default function Login() {

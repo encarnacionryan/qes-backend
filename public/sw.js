@@ -1,5 +1,3 @@
-
-
 const CACHE_NAME = "qes-shell-v1";
 const APP_SHELL = ["/", "/manifest.json"];
 
@@ -50,7 +48,12 @@ self.addEventListener("fetch", (event) => {
   }
 
   // Everything else: network-first, falling back to cache if offline.
+  // Always resolve to a real Response — respondWith() throws if handed
+  // undefined, which is what caches.match() returns on a cache miss.
   event.respondWith(
-    fetch(event.request).catch(() => caches.match(event.request))
+    fetch(event.request).catch(async () => {
+      const cached = await caches.match(event.request);
+      return cached || new Response("Offline", { status: 503, statusText: "Offline" });
+    })
   );
 });

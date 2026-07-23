@@ -6,10 +6,7 @@ use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-/**
- * FR-8.1: restricts account-management routes to the lead teacher, since
- * v1.0 has no separate admin account type. Register as the 'lead_teacher' alias.
- */
+
 class EnsureUserIsLeadTeacher
 {
     public function handle(Request $request, Closure $next): Response

@@ -8,12 +8,10 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
 
-/**
- * Sprint 1: QES-9 (student login), QES-10 (Sanctum token), QES-12 (logout).
- */
+
 class AuthController extends Controller
 {
-    /** New: student self-registration from the mobile app. */
+
     public function register(Request $request)
     {
         $data = $request->validate([

@@ -1,11 +1,3 @@
-// resources/js/Layouts/AuthenticatedLayout.jsx
-//
-// Shared shell for every logged-in page (teacher or student). Keeps nav
-// and logout in one place so individual pages stay focused on their own
-// content. `user` is expected to be passed via Inertia's shared props
-// (see SETUP.md note below on HandleInertiaRequests) — falls back
-// gracefully if not present yet.
-
 import { Link, usePage, router } from "@inertiajs/react";
 
 export default function AuthenticatedLayout({ children }) {
@@ -18,6 +10,7 @@ export default function AuthenticatedLayout({ children }) {
     }
 
     const isTeacher = user?.role === "teacher";
+    const isStudent = user?.role === "student";
 
     return (
         <div className="min-h-screen bg-gray-50">

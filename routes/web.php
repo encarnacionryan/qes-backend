@@ -6,16 +6,7 @@ use App\Http\Controllers\Web\SchoolClassController;
 use App\Http\Controllers\Web\ExamController;
 use Illuminate\Support\Facades\Route;
 
-/*
-|--------------------------------------------------------------------------
-| Web Routes (Inertia — teacher-facing)
-|--------------------------------------------------------------------------
-| Session-based auth. Mirrors FR-1.x through FR-8.x from the SRS.
-| Controllers referenced here are stubs to build out sprint by sprint —
-| see the ticket ID noted above each group.
-*/
 
-// Root: send authenticated users to their role's home, everyone else to login.
 Route::get('/', function () {
     if (! auth()->check()) {
         return redirect()->route('login');
@@ -32,10 +23,15 @@ Route::middleware('guest')->group(function () {
     Route::post('/register', [AuthController::class, 'register']);     // QES-7
 });
 
+// --- Authenticated (any role) — logout shouldn't be gated by role, and
+// both AuthenticatedLayout.jsx (teacher and student) post to this same
+// plain /logout URL rather than a role-prefixed one. ---
+Route::middleware('auth')->group(function () {
+    Route::post('/logout', [AuthController::class, 'destroy'])->name('logout'); // QES-12
+});
+
 // --- Authenticated (teacher) ---
 Route::middleware(['auth', 'role:teacher'])->group(function () {
-    Route::post('/logout', [AuthController::class, 'destroy'])->name('logout'); // QES-12
-
     Route::get('/dashboard', DashboardController::class)->name('dashboard');
 
     // Class management — QES-14 to QES-19
@@ -72,8 +68,6 @@ Route::middleware(['auth', 'role:teacher'])->group(function () {
 // web app instead of a separate native app, so it works on desktop,
 // tablet, and phone alike via the installable PWA shell. ---
 Route::middleware(['auth', 'role:student'])->prefix('student')->name('student.')->group(function () {
-    Route::post('/logout', [AuthController::class, 'destroy'])->name('logout');
-
     Route::get('/sessions', [\App\Http\Controllers\Web\Student\SessionController::class, 'index'])
         ->name('sessions.index'); // browse open sessions, server-wide
     Route::post('/sessions/{examSession}/join', [\App\Http\Controllers\Web\Student\SessionController::class, 'join'])
