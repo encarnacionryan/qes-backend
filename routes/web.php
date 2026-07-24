@@ -18,40 +18,41 @@ Route::get('/', function () {
 // --- Guest ---
 Route::middleware('guest')->group(function () {
     Route::get('/login', [AuthController::class, 'create'])->name('login');
-    Route::post('/login', [AuthController::class, 'store']);           // QES-8
+    Route::post('/login', [AuthController::class, 'store']);           
     Route::get('/register', [AuthController::class, 'showRegister']);
-    Route::post('/register', [AuthController::class, 'register']);     // QES-7
+    Route::post('/register', [AuthController::class, 'register']);     
 });
 
-// --- Authenticated (any role) — logout shouldn't be gated by role, and
-// both AuthenticatedLayout.jsx (teacher and student) post to this same
-// plain /logout URL rather than a role-prefixed one. ---
+
 Route::middleware('auth')->group(function () {
-    Route::post('/logout', [AuthController::class, 'destroy'])->name('logout'); // QES-12
+    Route::post('/logout', [AuthController::class, 'destroy'])->name('logout'); 
 });
 
 // --- Authenticated (teacher) ---
 Route::middleware(['auth', 'role:teacher'])->group(function () {
     Route::get('/dashboard', DashboardController::class)->name('dashboard');
 
-    // Class management — QES-14 to QES-19
-    // ->parameters() overrides the default {class} placeholder (singular of
-    // "classes") with {schoolClass}, matching the SchoolClass $schoolClass
-    // parameter used throughout SchoolClassController.
+
     Route::resource('classes', SchoolClassController::class)
         ->except(['show'])
         ->parameters(['classes' => 'schoolClass']);
     Route::get('classes/{schoolClass}', [SchoolClassController::class, 'show'])->name('classes.show');
     Route::delete('classes/{schoolClass}/students/{student}', [SchoolClassController::class, 'removeStudent'])
-        ->name('classes.students.remove'); // QES-17
+        ->name('classes.students.remove'); 
     Route::post('classes/{schoolClass}/archive', [SchoolClassController::class, 'archive'])
-        ->name('classes.archive'); // QES-18
+        ->name('classes.archive'); 
 
-    // Exam management — QES-20 to QES-26
     Route::resource('exams', ExamController::class);
-    Route::post('exams/{exam}/duplicate', [ExamController::class, 'duplicate'])->name('exams.duplicate'); // QES-26
-
-    // Exam sessions — new: public/private, password-gated, browsable by any student
+    Route::post('exams/{exam}/duplicate', [ExamController::class, 'duplicate'])->name('exams.duplicate'); 
+    Route::post('exams/{exam}/questions', [\App\Http\Controllers\Web\QuestionController::class, 'store'])
+        ->name('questions.store');
+    Route::put('exams/{exam}/questions/{question}', [\App\Http\Controllers\Web\QuestionController::class, 'update'])
+        ->name('questions.update');
+    Route::delete('exams/{exam}/questions/{question}', [\App\Http\Controllers\Web\QuestionController::class, 'destroy'])
+        ->name('questions.destroy');
+    Route::post('exams/{exam}/questions/reorder', [\App\Http\Controllers\Web\QuestionController::class, 'reorder'])
+        ->name('questions.reorder');
+    
     Route::get('exams/{exam}/sessions', [\App\Http\Controllers\Web\ExamSessionController::class, 'index'])
         ->name('sessions.index');
     Route::post('exams/{exam}/sessions', [\App\Http\Controllers\Web\ExamSessionController::class, 'store'])

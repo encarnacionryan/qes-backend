@@ -1,7 +1,3 @@
-// resources/js/Pages/Dashboard.jsx
-//
-// Teacher's landing page after login. Backed by Web\DashboardController,
-// which passes `classes` (with student counts) and the 5 most recent `exams`.
 
 import { Head, Link } from "@inertiajs/react";
 import AuthenticatedLayout from "../Layouts/AuthenticatedLayout";
