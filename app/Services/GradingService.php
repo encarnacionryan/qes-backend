@@ -8,14 +8,6 @@ use App\Models\Score;
 use App\Models\Submission;
 use Illuminate\Support\Facades\DB;
 
-/**
- * Auto-grading engine (FR-5.1, FR-5.2).
- *
- * Kept as a single service class — deliberately NOT duplicated between the
- * Inertia (web) controllers and the API (mobile) controllers — so grading
- * behaves identically no matter which client triggered the submission.
- * See SRS 5.5 (Maintainability).
- */
 class GradingService
 {
     public function gradeSubmission(Submission $submission): Score
@@ -24,7 +16,20 @@ class GradingService
             $totalEarned = 0;
             $totalPossible = 0;
 
-            foreach ($submission->answers()->with('question.choices')->get() as $answer) {
+            $existingAnswers = $submission->answers()->with('question.choices')->get()
+                ->keyBy('question_id');
+
+            foreach ($submission->exam->questions()->with('choices')->get() as $question) {
+                $answer = $existingAnswers->get($question->id);
+
+                if (! $answer) {
+                    $answer = $submission->answers()->create([
+                        'question_id' => $question->id,
+                        'response' => null,
+                    ]);
+                    $answer->setRelation('question', $question);
+                }
+
                 $result = $this->gradeAnswer($answer);
                 $answer->update([
                     'is_correct' => $result['is_correct'],
@@ -32,7 +37,7 @@ class GradingService
                 ]);
 
                 $totalEarned += $result['points_earned'];
-                $totalPossible += $answer->question->points;
+                $totalPossible += $question->points;
             }
 
             $submission->update(['status' => 'graded']);
@@ -49,9 +54,10 @@ class GradingService
         });
     }
 
-    /**
+     /**
      * @return array{is_correct: bool|null, points_earned: float}
      */
+    
     protected function gradeAnswer(Answer $answer): array
     {
         $question = $answer->question;
@@ -61,7 +67,7 @@ class GradingService
             'true_false' => $this->gradeExactMatch($question, $answer),
             'identification' => $this->gradeExactMatch($question, $answer),
             'matching' => $this->gradeMatching($question, $answer),
-            default => ['is_correct' => null, 'points_earned' => 0], // unknown/manual type
+            default => ['is_correct' => null, 'points_earned' => 0], 
         };
     }
 
@@ -78,7 +84,6 @@ class GradingService
         ];
     }
 
-    /** Shared by true_false and identification — both compare a single value to answer_key. */
     protected function gradeExactMatch(Question $question, Answer $answer): array
     {
         $expected = $this->normalize($question->answer_key['answer'] ?? null);
@@ -94,7 +99,6 @@ class GradingService
 
     protected function gradeMatching(Question $question, Answer $answer): array
     {
-        // response: { "pairs": [{"choice_id": 1, "match_value": "..."}], ... }
         $submittedPairs = collect($answer->response['pairs'] ?? []);
         $choices = $question->choices;
 
@@ -110,8 +114,6 @@ class GradingService
             }
         }
 
-        // Partial credit proportional to correct pairs, matching the spirit
-        // of FR-5.1 (objective, deterministic auto-grading).
         $fraction = $correctPairs / $choices->count();
 
         return [

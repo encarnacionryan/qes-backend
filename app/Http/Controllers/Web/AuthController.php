@@ -7,12 +7,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 
-/**
- * Sprint 1: QES-7 (register), QES-8 (login), QES-12 (logout).
- * Bodies below are minimal working implementations, not final stubs —
- * enough to unblock `php artisan migrate`/`serve` and give you something
- * to build the actual UI against in Sprint 1.
- */
 class AuthController extends Controller
 {
     public function create()
@@ -50,7 +44,7 @@ class AuthController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'email', 'unique:users,email'],
             'password' => ['required', 'confirmed', 'min:8'],
-            'role' => ['required', 'in:teacher,student'], // PWA update: both roles register here now
+            'role' => ['required', 'in:teacher,student'], 
         ]);
 
         $user = \App\Models\User::create([
@@ -58,7 +52,6 @@ class AuthController extends Controller
             'email' => $data['email'],
             'password' => bcrypt($data['password']),
             'role' => $data['role'],
-            // FR-8.1: first teacher becomes the lead teacher.
             'is_lead_teacher' => $data['role'] === 'teacher'
                 && ! \App\Models\User::where('role', 'teacher')->exists(),
         ]);

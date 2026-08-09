@@ -6,14 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Models\ExamSession;
 use Illuminate\Http\Request;
 
-/**
- * Replaces class-gated exam browsing. Any logged-in student can browse
- * open sessions server-wide; visibility/password decide who can actually
- * join, not class enrollment.
- *
- * Flow: index() (browse) -> join() (validate, create Submission) ->
- * SubmissionController::saveAnswers/submit (existing exam-taking flow).
- */
 class SessionController extends Controller
 {
     public function index(Request $request)
@@ -25,8 +17,6 @@ class SessionController extends Controller
             ->map(fn (ExamSession $session) => [
                 'id' => $session->id,
                 'visibility' => $session->visibility,
-                // Client shows a lock icon for private sessions but does NOT
-                // need the password itself to render the list.
                 'requires_password' => $session->isPrivate(),
                 'exam' => $session->exam,
                 'teacher' => $session->teacher,
@@ -63,17 +53,15 @@ class SessionController extends Controller
             'attempt_number' => $attemptCount + 1,
         ]);
 
-        // Safe to expose questions now — password (if any) has been validated.
         return response()->json([
             'submission' => $submission,
             'exam' => $exam->load(['questions' => function ($q) {
                 $q->select('id', 'exam_id', 'type', 'prompt', 'points', 'order')
-                    ->with(['choices:id,question_id,label,order']); // answer key withheld
+                    ->with(['choices:id,question_id,label,order']); 
             }]),
         ]);
     }
 
-    /** Re-fetch exam+questions for a session already joined (e.g. app restart mid-exam). */
     public function show(Request $request, ExamSession $examSession)
     {
         $hasJoined = $examSession->submissions()

@@ -1,4 +1,3 @@
-
 import { Head, Link } from "@inertiajs/react";
 import AuthenticatedLayout from "../../Layouts/AuthenticatedLayout";
 
@@ -57,6 +56,12 @@ export default function Index({ exams = [] }) {
                                 </Link>
                                 <Link href={`/exams/${exam.id}/sessions`} className="text-[#1F3864] underline">
                                     Host Session
+                                </Link>
+                                <Link href={`/exams/${exam.id}/leaderboard`} className="text-[#1F3864] underline">
+                                    Leaderboard
+                                </Link>
+                                <Link href={`/exams/${exam.id}/analytics`} className="text-[#1F3864] underline">
+                                    Analytics
                                 </Link>
                             </div>
                         </li>

@@ -7,9 +7,6 @@ use App\Models\SchoolClass;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
-/**
- * Sprint 2: Class Management (QES-14 to QES-19).
- */
 class SchoolClassController extends Controller
 {
     public function index(Request $request)
@@ -27,7 +24,7 @@ class SchoolClassController extends Controller
         return Inertia::render('Classes/Create');
     }
 
-    public function store(Request $request) // FR-2.1
+    public function store(Request $request) 
     {
         $data = $request->validate([
             'name' => ['required', 'string', 'max:255'],
@@ -35,7 +32,7 @@ class SchoolClassController extends Controller
             'section' => ['nullable', 'string', 'max:255'],
         ]);
 
-        $class = $request->user()->classesTaught()->create($data); // join_code auto-generated (FR-2.2)
+        $class = $request->user()->classesTaught()->create($data); 
 
         return redirect()->route('classes.show', $class)->with('success', 'Class created.');
     }
@@ -56,7 +53,7 @@ class SchoolClassController extends Controller
         return Inertia::render('Classes/Edit', ['class' => $schoolClass]);
     }
 
-    public function update(Request $request, SchoolClass $schoolClass) // FR-2.1 (edit)
+    public function update(Request $request, SchoolClass $schoolClass)
     {
         $this->authorizeOwnership($schoolClass);
 
@@ -71,7 +68,7 @@ class SchoolClassController extends Controller
         return back()->with('success', 'Class updated.');
     }
 
-    public function destroy(SchoolClass $schoolClass) // FR-2.5
+    public function destroy(SchoolClass $schoolClass) 
     {
         $this->authorizeOwnership($schoolClass);
         $schoolClass->delete();
@@ -79,7 +76,7 @@ class SchoolClassController extends Controller
         return redirect()->route('classes.index')->with('success', 'Class deleted.');
     }
 
-    public function removeStudent(SchoolClass $schoolClass, \App\Models\User $student) // FR-2.4
+    public function removeStudent(SchoolClass $schoolClass, \App\Models\User $student) 
     {
         $this->authorizeOwnership($schoolClass);
         $schoolClass->enrollments()->where('student_id', $student->id)->delete();
@@ -87,7 +84,7 @@ class SchoolClassController extends Controller
         return back()->with('success', 'Student removed from class.');
     }
 
-    public function archive(SchoolClass $schoolClass) // FR-2.5
+    public function archive(SchoolClass $schoolClass) 
     {
         $this->authorizeOwnership($schoolClass);
         $schoolClass->update(['is_archived' => true]);

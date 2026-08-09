@@ -7,12 +7,6 @@ use App\Models\ExamSession;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
-/**
- * PWA update: students now use the same Inertia web app as teachers
- * (installable on desktop/tablet/phone) instead of a separate native app.
- * Mirrors the logic in App\Http\Controllers\Api\V1\SessionController, but
- * session-authenticated and Inertia-rendered rather than token/JSON.
- */
 class SessionController extends Controller
 {
     public function index()
@@ -34,7 +28,10 @@ class SessionController extends Controller
 
     public function join(Request $request, ExamSession $examSession)
     {
-        abort_unless($examSession->isOpen(), 422, 'This exam session is no longer open.');
+        if (! $examSession->isOpen()) {
+            return redirect()->route('student.sessions.index')
+                ->with('error', 'That exam session is no longer open.');
+        }
 
         $data = $request->validate(['password' => ['nullable', 'string']]);
 
@@ -46,7 +43,10 @@ class SessionController extends Controller
         $exam = $examSession->exam;
 
         $attemptCount = $examSession->submissions()->where('student_id', $studentId)->count();
-        abort_if($attemptCount > 0 && ! $exam->allow_retake, 422, 'You have already joined this session.');
+        if ($attemptCount > 0 && ! $exam->allow_retake) {
+            return redirect()->route('student.sessions.index')
+                ->with('error', 'You\'ve already joined this session.');
+        }
 
         $submission = $examSession->submissions()->create([
             'exam_id' => $exam->id,

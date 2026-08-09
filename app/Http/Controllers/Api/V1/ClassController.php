@@ -6,12 +6,9 @@ use App\Http\Controllers\Controller;
 use App\Models\SchoolClass;
 use Illuminate\Http\Request;
 
-/**
- * Sprint 2: QES-16 (join class from mobile).
- */
 class ClassController extends Controller
 {
-    public function join(Request $request) // FR-2.3
+    public function join(Request $request) 
     {
         $data = $request->validate([
             'join_code' => ['required', 'string'],

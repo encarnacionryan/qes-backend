@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Head, Link, useForm, router } from "@inertiajs/react";
 import AuthenticatedLayout from "../../Layouts/AuthenticatedLayout";
@@ -129,6 +128,10 @@ export default function Sessions({ exam, sessions = [] }) {
                                         }`}
                                     >
                                         {session.status}
+                                    </span>
+                                    <span className="text-xs bg-blue-50 text-[#1F3864] px-2 py-0.5 rounded-full">
+                                        {session.submissions_count}{" "}
+                                        student{session.submissions_count === 1 ? "" : "s"} joined
                                     </span>
                                 </div>
                                 <p className="text-xs text-gray-400 mt-1">

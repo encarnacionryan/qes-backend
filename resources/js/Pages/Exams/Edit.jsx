@@ -1,6 +1,5 @@
-
 import { useState } from "react";
-import { Head, Link, useForm, router } from "@inertiajs/react";
+import { Head, Link, useForm, usePage, router } from "@inertiajs/react";
 import AuthenticatedLayout from "../../Layouts/AuthenticatedLayout";
 
 const QUESTION_TYPES = [
@@ -23,9 +22,10 @@ function blankForm() {
 }
 
 export default function Edit({ exam }) {
-    const [editingId, setEditingId] = useState(null); // null = adding new
+    const [editingId, setEditingId] = useState(null); 
     const [showForm, setShowForm] = useState(false);
-    const { data, setData, post, put, processing, errors, reset } = useForm(blankForm());
+    const { data, setData, post, put, processing, errors, reset, transform } = useForm(blankForm());
+    const { errors: pageErrors } = usePage().props;
 
     const questions = exam.questions || [];
 
@@ -66,7 +66,6 @@ export default function Edit({ exam }) {
     function updateChoice(index, field, value) {
         const next = [...data.choices];
         next[index] = { ...next[index], [field]: value };
-        // For MCQ, enforce single-correct-answer by clearing others when one is checked.
         if (field === "is_correct" && value === true && data.type === "mcq") {
             next.forEach((c, i) => {
                 if (i !== index) c.is_correct = false;
@@ -90,6 +89,21 @@ export default function Edit({ exam }) {
             setShowForm(false);
             setEditingId(null);
         };
+
+        transform((formData) => {
+            const payload = {
+                type: formData.type,
+                prompt: formData.prompt,
+                points: formData.points,
+            };
+            if (formData.type === "true_false" || formData.type === "identification") {
+                payload.answer = formData.answer;
+            }
+            if (formData.type === "mcq" || formData.type === "matching") {
+                payload.choices = formData.choices;
+            }
+            return payload;
+        });
 
         if (editingId) {
             put(`/exams/${exam.id}/questions/${editingId}`, { onSuccess });
@@ -117,12 +131,26 @@ export default function Edit({ exam }) {
                         {questions.length} question{questions.length === 1 ? "" : "s"}
                     </p>
                 </div>
-                <Link
-                    href={`/exams/${exam.id}/sessions`}
-                    className="bg-[#1F3864] text-white px-4 py-2 rounded-lg text-sm font-semibold"
-                >
-                    Host a Session →
-                </Link>
+                <div className="flex gap-2">
+                    <Link
+                        href={`/exams/${exam.id}/analytics`}
+                        className="bg-white border border-[#1F3864] text-[#1F3864] px-4 py-2 rounded-lg text-sm font-semibold"
+                    >
+                        Analytics
+                    </Link>
+                    <Link
+                        href={`/exams/${exam.id}/leaderboard`}
+                        className="bg-white border border-[#1F3864] text-[#1F3864] px-4 py-2 rounded-lg text-sm font-semibold"
+                    >
+                        Leaderboard
+                    </Link>
+                    <Link
+                        href={`/exams/${exam.id}/sessions`}
+                        className="bg-[#1F3864] text-white px-4 py-2 rounded-lg text-sm font-semibold"
+                    >
+                        Host a Session →
+                    </Link>
+                </div>
             </div>
 
             {/* Existing questions */}
@@ -164,6 +192,12 @@ export default function Edit({ exam }) {
             </div>
 
             {/* Add/edit form */}
+            {pageErrors?.exam && (
+                <div className="bg-red-50 border border-red-200 text-red-700 text-sm rounded-lg px-4 py-3 mb-6">
+                    {pageErrors.exam}
+                </div>
+            )}
+
             {showForm ? (
                 <form onSubmit={handleSubmit} className="bg-white rounded-xl shadow p-6 space-y-4">
                     <h2 className="font-semibold text-gray-700">
@@ -320,6 +354,28 @@ export default function Edit({ exam }) {
                     + Add a Question
                 </button>
             )}
+
+            <div className="mt-10 bg-red-50 border border-red-100 rounded-xl p-5">
+                <h2 className="text-sm font-semibold text-red-700 mb-1">Danger Zone</h2>
+                <p className="text-xs text-red-600 mb-3">
+                    Deleting an exam permanently removes it, its questions, and any sessions
+                    hosted from it. This cannot be undone.
+                </p>
+                <button
+                    onClick={() => {
+                        if (
+                            confirm(
+                                `Delete "${exam.title}" permanently? This cannot be undone.`
+                            )
+                        ) {
+                            router.delete(`/exams/${exam.id}`);
+                        }
+                    }}
+                    className="text-sm bg-white border border-red-300 text-red-700 px-4 py-2 rounded-lg font-semibold"
+                >
+                    Delete Exam
+                </button>
+            </div>
         </AuthenticatedLayout>
     );
 }

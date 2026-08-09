@@ -1,4 +1,3 @@
-
 import { Head, Link } from "@inertiajs/react";
 import AuthenticatedLayout from "../Layouts/AuthenticatedLayout";
 
@@ -76,7 +75,7 @@ export default function Dashboard({ classes = [], exams = [] }) {
                                 <li key={exam.id} className="py-3 flex items-center justify-between">
                                     <div>
                                         <Link
-                                            href={`/exams/${exam.id}`}
+                                            href={`/exams/${exam.id}/edit`}
                                             className="font-medium text-gray-800 hover:underline"
                                         >
                                             {exam.title}

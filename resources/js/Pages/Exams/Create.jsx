@@ -1,4 +1,3 @@
-
 import { Head, Link, useForm } from "@inertiajs/react";
 import AuthenticatedLayout from "../../Layouts/AuthenticatedLayout";
 

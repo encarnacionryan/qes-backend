@@ -8,10 +8,8 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
 
-
 class AuthController extends Controller
 {
-
     public function register(Request $request)
     {
         $data = $request->validate([
@@ -51,7 +49,6 @@ class AuthController extends Controller
 
         abort_if(! $user->is_active, 403, 'This account has been disabled.');
 
-        // FR-1.4: scoped Sanctum token for the mobile app.
         $token = $user->createToken('qes-mobile', ['student'])->plainTextToken;
 
         return response()->json([

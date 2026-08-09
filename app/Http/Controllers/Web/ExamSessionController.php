@@ -8,11 +8,6 @@ use App\Models\ExamSession;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
-/**
- * New feature: teacher hosts an Exam as a browsable/joinable session.
- * Replaces the old class-scoped publish flow — see Exam::sessions() and
- * app/Http/Controllers/Api/V1/SessionController.php for the student side.
- */
 class ExamSessionController extends Controller
 {
     public function index(Exam $exam)
@@ -21,7 +16,7 @@ class ExamSessionController extends Controller
 
         return Inertia::render('Exams/Sessions', [
             'exam' => $exam,
-            'sessions' => $exam->sessions()->latest()->get(),
+            'sessions' => $exam->sessions()->withCount('submissions')->latest()->get(),
         ]);
     }
 

@@ -7,11 +7,6 @@ use App\Models\Exam;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
-/**
- * Sprint 3: Exam Creation & Management (QES-20 to QES-26).
- * leaderboard()/analytics() are placeholders — real implementations land
- * in Sprint 6 (QES-38+) and Sprint 7 (QES-43+) respectively.
- */
 class ExamController extends Controller
 {
     public function index(Request $request)
@@ -26,7 +21,7 @@ class ExamController extends Controller
         return Inertia::render('Exams/Create');
     }
 
-    public function store(Request $request) // FR-3.1
+    public function store(Request $request) 
     {
         $data = $request->validate([
             'title' => ['required', 'string', 'max:255'],
@@ -43,21 +38,23 @@ class ExamController extends Controller
     {
         $this->authorizeOwnership($exam);
 
-        return Inertia::render('Exams/Show', ['exam' => $exam->load('questions.choices', 'classes')]);
+        return redirect()->route('exams.edit', $exam);
     }
 
-    public function edit(Exam $exam) // FR-3.2, FR-3.3, FR-3.4
+    public function edit(Exam $exam) 
     {
         $this->authorizeOwnership($exam);
-        $this->authorizeNotStarted($exam);
 
         return Inertia::render('Exams/Edit', ['exam' => $exam->load('questions.choices')]);
     }
 
-    public function update(Request $request, Exam $exam) // FR-3.4
+    public function update(Request $request, Exam $exam) 
     {
         $this->authorizeOwnership($exam);
-        $this->authorizeNotStarted($exam);
+
+        if ($blocked = $this->blockIfStarted($exam)) {
+            return $blocked;
+        }
 
         $data = $request->validate([
             'title' => ['required', 'string', 'max:255'],
@@ -73,7 +70,7 @@ class ExamController extends Controller
         return back()->with('success', 'Exam updated.');
     }
 
-    public function destroy(Exam $exam) // FR-3.4
+    public function destroy(Exam $exam)
     {
         $this->authorizeOwnership($exam);
         $exam->delete();
@@ -81,7 +78,7 @@ class ExamController extends Controller
         return redirect()->route('exams.index')->with('success', 'Exam deleted.');
     }
 
-    public function duplicate(Exam $exam) // FR-3.7
+    public function duplicate(Exam $exam) 
     {
         $this->authorizeOwnership($exam);
 
@@ -105,7 +102,7 @@ class ExamController extends Controller
         return redirect()->route('exams.edit', $copy)->with('success', 'Exam duplicated.');
     }
 
-    public function leaderboard(Exam $exam) // Sprint 6, FR-6.1/6.3
+    public function leaderboard(Exam $exam)
     {
         $this->authorizeOwnership($exam);
 
@@ -115,13 +112,13 @@ class ExamController extends Controller
         ]);
     }
 
-    public function analytics(Exam $exam) // Sprint 7, FR-7.1/7.2
+    public function analytics(Exam $exam, \App\Services\AnalyticsService $analytics)
     {
         $this->authorizeOwnership($exam);
 
         return Inertia::render('Exams/Analytics', [
             'exam' => $exam,
-            // TODO Sprint 7: class average, high/low, per-question % correct.
+            'stats' => $analytics->forExam($exam),
         ]);
     }
 
@@ -130,8 +127,14 @@ class ExamController extends Controller
         abort_unless($exam->teacher_id === auth()->id(), 403);
     }
 
-    protected function authorizeNotStarted(Exam $exam): void
+    protected function blockIfStarted(Exam $exam): ?\Illuminate\Http\RedirectResponse
     {
-        abort_if($exam->hasStartedSubmissions(), 422, 'Cannot edit an exam that students have already started.'); // FR-3.6
+        if ($exam->hasStartedSubmissions()) {
+            return back()->withErrors([
+                'exam' => 'This exam can\'t be edited anymore — a student has already started it.',
+            ]);
+        }
+
+        return null;
     }
 }

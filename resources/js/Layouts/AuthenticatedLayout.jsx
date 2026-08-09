@@ -1,8 +1,14 @@
+import { useEffect, useState } from "react";
 import { Link, usePage, router } from "@inertiajs/react";
 
 export default function AuthenticatedLayout({ children }) {
-    const { auth } = usePage().props;
+    const { auth, flash } = usePage().props;
     const user = auth?.user;
+    const [dismissed, setDismissed] = useState(false);
+
+    useEffect(() => {
+        setDismissed(false);
+    }, [flash?.success, flash?.error]);
 
     function handleLogout(e) {
         e.preventDefault();
@@ -10,7 +16,8 @@ export default function AuthenticatedLayout({ children }) {
     }
 
     const isTeacher = user?.role === "teacher";
-    const isStudent = user?.role === "student";
+    const message = flash?.error || flash?.success;
+    const isError = !!flash?.error;
 
     return (
         <div className="min-h-screen bg-gray-50">
@@ -47,6 +54,22 @@ export default function AuthenticatedLayout({ children }) {
                     </div>
                 </div>
             </nav>
+
+            {message && !dismissed && (
+                <div
+                    className={`px-4 py-3 text-sm flex items-center justify-between ${
+                        isError ? "bg-red-50 text-red-700 border-b border-red-200" : "bg-green-50 text-green-700 border-b border-green-200"
+                    }`}
+                >
+                    <span className="max-w-5xl mx-auto w-full">{message}</span>
+                    <button
+                        onClick={() => setDismissed(true)}
+                        className="text-xs opacity-60 hover:opacity-100 ml-4"
+                    >
+                        ✕
+                    </button>
+                </div>
+            )}
 
             <main className="max-w-5xl mx-auto px-4 py-8">{children}</main>
         </div>

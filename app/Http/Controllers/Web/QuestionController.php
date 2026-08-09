@@ -13,7 +13,9 @@ class QuestionController extends Controller
     public function store(Request $request, Exam $exam)
     {
         $this->authorizeOwnership($exam);
-        $this->authorizeNotStarted($exam);
+        if ($blocked = $this->blockIfStarted($exam)) {
+            return $blocked;
+        }
 
         $data = $this->validated($request);
 
@@ -55,7 +57,9 @@ class QuestionController extends Controller
     public function update(Request $request, Exam $exam, Question $question)
     {
         $this->authorizeOwnership($exam);
-        $this->authorizeNotStarted($exam);
+        if ($blocked = $this->blockIfStarted($exam)) {
+            return $blocked;
+        }
         abort_unless($question->exam_id === $exam->id, 404);
 
         $data = $this->validated($request);
@@ -99,7 +103,9 @@ class QuestionController extends Controller
     public function destroy(Exam $exam, Question $question)
     {
         $this->authorizeOwnership($exam);
-        $this->authorizeNotStarted($exam);
+        if ($blocked = $this->blockIfStarted($exam)) {
+            return $blocked;
+        }
         abort_unless($question->exam_id === $exam->id, 404);
 
         $question->delete();
@@ -111,7 +117,9 @@ class QuestionController extends Controller
     public function reorder(Request $request, Exam $exam)
     {
         $this->authorizeOwnership($exam);
-        $this->authorizeNotStarted($exam);
+        if ($blocked = $this->blockIfStarted($exam)) {
+            return $blocked;
+        }
 
         $data = $request->validate([
             'question_ids' => ['required', 'array'],
@@ -127,17 +135,25 @@ class QuestionController extends Controller
 
     protected function validated(Request $request): array
     {
+        $type = $request->input('type');
+        if (! in_array($type, ['mcq', 'matching'], true)) {
+            $request->request->remove('choices');
+        }
+        if (! in_array($type, ['true_false', 'identification'], true)) {
+            $request->request->remove('answer');
+        }
+
         return $request->validate([
             'type' => ['required', Rule::in(['mcq', 'true_false', 'identification', 'matching'])],
             'prompt' => ['required', 'string'],
             'points' => ['required', 'integer', 'min:1'],
-            // true_false / identification only:
+            
             'answer' => ['required_if:type,true_false,identification', 'nullable', 'string'],
-            // mcq / matching only:
+            
             'choices' => ['required_if:type,mcq,matching', 'nullable', 'array', 'min:2'],
             'choices.*.label' => ['required_with:choices', 'string'],
-            'choices.*.is_correct' => ['nullable', 'boolean'], // mcq
-            'choices.*.match_value' => ['required_if:type,matching', 'nullable', 'string'], // matching
+            'choices.*.is_correct' => ['nullable', 'boolean'],
+            'choices.*.match_value' => ['required_if:type,matching', 'nullable', 'string'], 
         ]);
     }
 
@@ -151,8 +167,14 @@ class QuestionController extends Controller
         abort_unless($exam->teacher_id === auth()->id(), 403);
     }
 
-    protected function authorizeNotStarted(Exam $exam): void
+    protected function blockIfStarted(Exam $exam): ?\Illuminate\Http\RedirectResponse
     {
-        abort_if($exam->hasStartedSubmissions(), 422, 'Cannot edit questions after students have started this exam.'); // FR-3.6
+        if ($exam->hasStartedSubmissions()) {
+            return back()->withErrors([
+                'exam' => 'Questions can\'t be changed anymore — a student has already started this exam.',
+            ]);
+        }
+
+        return null;
     }
 }
