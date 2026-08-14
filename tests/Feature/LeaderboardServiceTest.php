@@ -11,6 +11,7 @@ use App\Models\User;
 use App\Services\GradingService;
 use App\Services\LeaderboardService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 class LeaderboardServiceTest extends TestCase
@@ -69,13 +70,13 @@ class LeaderboardServiceTest extends TestCase
         return $submission;
     }
 
-    /** @test */
+    #[Test]
     public function it_ranks_higher_scores_above_lower_scores(): void
     {
         $exam = $this->makeExamWithOneQuestion();
 
-        $this->submitAndGrade($exam, 'Alice', 'wrong', 0, 60);   // 0%, 60s
-        $this->submitAndGrade($exam, 'Bob', 'correct', 0, 90);   // 100%, 90s
+        $this->submitAndGrade($exam, 'Alice', 'wrong', 0, 60);  
+        $this->submitAndGrade($exam, 'Bob', 'correct', 0, 90);   
 
         $entries = $exam->fresh()->leaderboardEntries()->with('student')->get();
 
@@ -85,7 +86,7 @@ class LeaderboardServiceTest extends TestCase
         $this->assertEquals(2, $entries[1]->rank);
     }
 
-    /** @test */
+    #[Test]
     public function it_uses_completion_time_as_a_tiebreaker_when_scores_are_equal(): void
     {
         $exam = $this->makeExamWithOneQuestion();
@@ -100,7 +101,7 @@ class LeaderboardServiceTest extends TestCase
         $this->assertEquals('Dave', $entries[1]->student->name);
     }
 
-    /** @test */
+    #[Test]
     public function a_retake_updates_the_existing_entry_instead_of_adding_a_second_row(): void
     {
         $exam = $this->makeExamWithOneQuestion();
@@ -115,7 +116,6 @@ class LeaderboardServiceTest extends TestCase
             'visibility' => 'public', 'status' => 'open',
         ]);
 
-        // First attempt: wrong answer.
         $first = Submission::create([
             'exam_id' => $exam->id, 'exam_session_id' => $session->id, 'student_id' => $student->id,
             'started_at' => now(), 'submitted_at' => now()->addSeconds(60),
@@ -128,7 +128,6 @@ class LeaderboardServiceTest extends TestCase
         app(GradingService::class)->gradeSubmission($first);
         app(LeaderboardService::class)->updateForSubmission($first);
 
-        // Second attempt (retake): correct answer.
         $second = Submission::create([
             'exam_id' => $exam->id, 'exam_session_id' => $session->id, 'student_id' => $student->id,
             'started_at' => now(), 'submitted_at' => now()->addSeconds(45),

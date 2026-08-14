@@ -38,6 +38,11 @@ export default function AuthenticatedLayout({ children }) {
                                 <Link href="/exams" className="text-sm hover:underline">
                                     Exams
                                 </Link>
+                                {user?.is_lead_teacher && (
+                                    <Link href="/admin/teachers" className="text-sm hover:underline">
+                                        Admin
+                                    </Link>
+                                )}
                             </>
                         ) : (
                             <Link href="/student/sessions" className="text-sm hover:underline">

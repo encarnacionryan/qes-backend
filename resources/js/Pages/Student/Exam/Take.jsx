@@ -1,4 +1,3 @@
-
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Head, router } from "@inertiajs/react";
 import axios from "axios";
@@ -31,7 +30,7 @@ function toResponse(question, value) {
             })),
         };
     }
-    return { answer: value }; // true_false, identification
+    return { answer: value }; 
 }
 
 export default function Take({ submission, exam }) {
@@ -40,6 +39,7 @@ export default function Take({ submission, exam }) {
     const [savingIds, setSavingIds] = useState(new Set());
     const [submitting, setSubmitting] = useState(false);
     const saveTimers = useRef({});
+    const pendingSaves = useRef({});
 
     const deadline = useMemo(() => {
         return new Date(submission.started_at).getTime() + exam.time_limit_minutes * 60 * 1000;
@@ -47,7 +47,6 @@ export default function Take({ submission, exam }) {
 
     const [remainingMs, setRemainingMs] = useState(() => deadline - Date.now());
 
-    // Countdown + auto-submit (FR-4.3)
     useEffect(() => {
         const interval = setInterval(() => {
             const remaining = deadline - Date.now();
@@ -58,26 +57,25 @@ export default function Take({ submission, exam }) {
             }
         }, 1000);
         return () => clearInterval(interval);
-        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [deadline]);
 
     function saveAnswer(questionId, response) {
         setSavingIds((prev) => new Set(prev).add(questionId));
-        axios
+        const request = axios
             .put(`/student/submissions/${submission.id}/answers`, {
                 answers: [{ question_id: questionId, response }],
             })
-            .catch(() => {
-                // FR-4.6: retry once after a short delay on network failure.
-                // The exam itself stays fully usable in the meantime — this
-                // is a background save, not a blocking one.
-                setTimeout(() => {
-                    axios
-                        .put(`/student/submissions/${submission.id}/answers`, {
-                            answers: [{ question_id: questionId, response }],
-                        })
-                        .catch(() => {});
-                }, 3000);
+            .catch(() => 
+                return new Promise((resolve) => {
+                    setTimeout(() => {
+                        axios
+                            .put(`/student/submissions/${submission.id}/answers`, {
+                                answers: [{ question_id: questionId, response }],
+                            })
+                            .catch(() => {})
+                            .finally(resolve);
+                    }, 3000);
+                });
             })
             .finally(() => {
                 setSavingIds((prev) => {
@@ -86,15 +84,19 @@ export default function Take({ submission, exam }) {
                     return next;
                 });
             });
+
+        return request;
     }
 
     function updateAnswer(question, value) {
         setAnswers((prev) => ({ ...prev, [question.id]: value }));
 
         clearTimeout(saveTimers.current[question.id]);
+        pendingSaves.current[question.id] = toResponse(question, value);
         saveTimers.current[question.id] = setTimeout(() => {
-            saveAnswer(question.id, toResponse(question, value));
-        }, 600); // debounce so typing doesn't fire a request per keystroke
+            saveAnswer(question.id, pendingSaves.current[question.id]);
+            delete pendingSaves.current[question.id];
+        }, 600);
     }
 
     function updateMatchingAnswer(question, choiceId, value) {
@@ -102,12 +104,26 @@ export default function Take({ submission, exam }) {
         updateAnswer(question, next);
     }
 
-    function handleSubmit(auto = false) {
+    async function flushPendingSaves() {
+        const pending = Object.entries(pendingSaves.current);
+        if (pending.length === 0) return;
+
+        await Promise.all(
+            pending.map(([questionId, response]) => {
+                clearTimeout(saveTimers.current[questionId]);
+                delete pendingSaves.current[questionId];
+                return saveAnswer(Number(questionId), response);
+            })
+        );
+    }
+
+    async function handleSubmit(auto = false) {
         if (submitting) return;
         if (!auto && !confirm("Submit your exam now? You won't be able to change your answers after this.")) {
             return;
         }
         setSubmitting(true);
+        await flushPendingSaves();
         router.post(`/student/submissions/${submission.id}/submit`);
     }
 

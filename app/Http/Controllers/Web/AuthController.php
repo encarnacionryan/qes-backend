@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
-
+ 
 class AuthController extends Controller
 {
     public function create()
@@ -23,6 +23,14 @@ class AuthController extends Controller
 
         if (! Auth::attempt($credentials)) {
             return back()->withErrors(['email' => 'Invalid credentials.']);
+        }
+
+        if (! Auth::user()->is_active) {
+            Auth::logout();
+            $request->session()->invalidate();
+            $request->session()->regenerateToken();
+
+            return back()->withErrors(['email' => 'This account has been disabled. Contact your lead teacher.']);
         }
 
         $request->session()->regenerate();

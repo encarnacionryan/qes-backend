@@ -54,10 +54,9 @@ class GradingService
         });
     }
 
-     /**
+    /**
      * @return array{is_correct: bool|null, points_earned: float}
      */
-    
     protected function gradeAnswer(Answer $answer): array
     {
         $question = $answer->question;
@@ -99,17 +98,20 @@ class GradingService
 
     protected function gradeMatching(Question $question, Answer $answer): array
     {
-        $submittedPairs = collect($answer->response['pairs'] ?? []);
         $choices = $question->choices;
 
-        if ($choices->isEmpty() || $submittedPairs->count() !== $choices->count()) {
+        if ($choices->isEmpty()) {
             return ['is_correct' => false, 'points_earned' => 0];
         }
 
+        $submittedPairs = collect($answer->response['pairs'] ?? [])->keyBy('choice_id');
+
         $correctPairs = 0;
-        foreach ($submittedPairs as $pair) {
-            $choice = $choices->firstWhere('id', $pair['choice_id'] ?? null);
-            if ($choice && $this->normalize($choice->match_value) === $this->normalize($pair['match_value'] ?? null)) {
+        foreach ($choices as $choice) {
+            $submitted = $submittedPairs->get($choice->id);
+            $submittedValue = is_array($submitted) ? ($submitted['match_value'] ?? null) : null;
+
+            if ($this->normalize($choice->match_value) === $this->normalize($submittedValue)) {
                 $correctPairs++;
             }
         }

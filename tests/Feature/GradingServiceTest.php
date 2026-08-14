@@ -11,6 +11,7 @@ use App\Models\Submission;
 use App\Models\User;
 use App\Services\GradingService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 class GradingServiceTest extends TestCase
@@ -68,7 +69,7 @@ class GradingServiceTest extends TestCase
         ]);
     }
 
-    
+    #[Test]
     public function it_grades_a_correct_mcq_answer(): void
     {
         [$teacher, $student] = $this->makeTeacherAndStudent();
@@ -95,7 +96,7 @@ class GradingServiceTest extends TestCase
         $this->assertTrue($submission->answers()->first()->is_correct);
     }
 
-    
+    #[Test]
     public function it_marks_an_incorrect_mcq_answer_wrong_with_zero_points(): void
     {
         [$teacher, $student] = $this->makeTeacherAndStudent();
@@ -121,7 +122,7 @@ class GradingServiceTest extends TestCase
         $this->assertFalse($submission->answers()->first()->is_correct);
     }
 
-    
+    #[Test]
     public function it_grades_true_false_case_insensitively(): void
     {
         [$teacher, $student] = $this->makeTeacherAndStudent();
@@ -135,7 +136,7 @@ class GradingServiceTest extends TestCase
         $submission = $this->makeSubmission($exam, $student);
         Answer::create([
             'submission_id' => $submission->id, 'question_id' => $question->id,
-            'response' => ['answer' => 'true'], // different casing than the stored key
+            'response' => ['answer' => 'true'], 
         ]);
 
         $score = app(GradingService::class)->gradeSubmission($submission);
@@ -144,7 +145,7 @@ class GradingServiceTest extends TestCase
         $this->assertTrue($submission->answers()->first()->is_correct);
     }
 
-    
+    #[Test]
     public function it_grades_identification_with_trimmed_case_insensitive_match(): void
     {
         [$teacher, $student] = $this->makeTeacherAndStudent();
@@ -158,7 +159,7 @@ class GradingServiceTest extends TestCase
         $submission = $this->makeSubmission($exam, $student);
         Answer::create([
             'submission_id' => $submission->id, 'question_id' => $question->id,
-            'response' => ['answer' => '  mitochondria  '], // stray whitespace + different case
+            'response' => ['answer' => '  mitochondria  '],
         ]);
 
         $score = app(GradingService::class)->gradeSubmission($submission);
@@ -167,7 +168,7 @@ class GradingServiceTest extends TestCase
         $this->assertTrue($submission->answers()->first()->is_correct);
     }
 
-    
+    #[Test]
     public function it_awards_partial_credit_for_matching_questions(): void
     {
         [$teacher, $student] = $this->makeTeacherAndStudent();
@@ -185,18 +186,46 @@ class GradingServiceTest extends TestCase
         Answer::create([
             'submission_id' => $submission->id, 'question_id' => $question->id,
             'response' => ['pairs' => [
-                ['choice_id' => $c1->id, 'match_value' => 'France'],   // correct
-                ['choice_id' => $c2->id, 'match_value' => 'Germany'],  // correct
-                ['choice_id' => $c3->id, 'match_value' => 'Italy'],    // wrong
+                ['choice_id' => $c1->id, 'match_value' => 'France'],   
+                ['choice_id' => $c2->id, 'match_value' => 'Germany'],  
+                ['choice_id' => $c3->id, 'match_value' => 'Italy'],    
+            ]],
+        ]);
+
+        $score = app(GradingService::class)->gradeSubmission($submission);
+        $this->assertEquals(6, $score->total_points_earned);
+        $this->assertFalse($submission->answers()->first()->is_correct); 
+    }
+
+    #[Test]
+    public function a_missing_matching_pair_still_credits_the_pairs_that_were_submitted(): void
+    {
+        [$teacher, $student] = $this->makeTeacherAndStudent();
+        $exam = $this->makeExam($teacher);
+
+        $question = Question::create([
+            'exam_id' => $exam->id, 'type' => 'matching', 'prompt' => 'Match capitals to countries.',
+            'points' => 9, 'order' => 1,
+        ]);
+        $c1 = Choice::create(['question_id' => $question->id, 'label' => 'Paris', 'match_value' => 'France', 'order' => 1]);
+        $c2 = Choice::create(['question_id' => $question->id, 'label' => 'Berlin', 'match_value' => 'Germany', 'order' => 2]);
+        $c3 = Choice::create(['question_id' => $question->id, 'label' => 'Madrid', 'match_value' => 'Spain', 'order' => 3]);
+
+        $submission = $this->makeSubmission($exam, $student);
+        Answer::create([
+            'submission_id' => $submission->id, 'question_id' => $question->id,
+            'response' => ['pairs' => [
+                ['choice_id' => $c1->id, 'match_value' => 'France'],
+                ['choice_id' => $c2->id, 'match_value' => 'Germany'],
             ]],
         ]);
 
         $score = app(GradingService::class)->gradeSubmission($submission);
 
         $this->assertEquals(6, $score->total_points_earned);
-        $this->assertFalse($submission->answers()->first()->is_correct); 
     }
 
+    #[Test]
     public function a_skipped_question_still_counts_toward_total_points_possible(): void
     {
         [$teacher, $student] = $this->makeTeacherAndStudent();
@@ -229,11 +258,11 @@ class GradingServiceTest extends TestCase
         $this->assertEquals(0, $skippedAnswer->points_earned);
     }
 
+    #[Test]
     public function percentage_is_zero_not_a_division_error_when_exam_has_no_points(): void
     {
         [$teacher, $student] = $this->makeTeacherAndStudent();
         $exam = $this->makeExam($teacher); 
-
         $submission = $this->makeSubmission($exam, $student);
 
         $score = app(GradingService::class)->gradeSubmission($submission);

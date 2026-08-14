@@ -14,20 +14,33 @@ class AuthenticationTest extends TestCase
     {
         $response = $this->get('/login');
 
-        $response->assertStatus(200);
+        $response->assertOk();
     }
 
-    public function test_users_can_authenticate_using_the_login_screen(): void
+    public function test_teacher_is_redirected_to_dashboard_after_login(): void
     {
-        $user = User::factory()->create();
+        $teacher = User::factory()->create(['role' => 'teacher']);
 
         $response = $this->post('/login', [
-            'email' => $user->email,
+            'email' => $teacher->email,
             'password' => 'password',
         ]);
 
-        $this->assertAuthenticated();
+        $this->assertAuthenticatedAs($teacher);
         $response->assertRedirect(route('dashboard', absolute: false));
+    }
+
+    public function test_student_is_redirected_to_session_browser_after_login(): void
+    {
+        $student = User::factory()->create(['role' => 'student']);
+
+        $response = $this->post('/login', [
+            'email' => $student->email,
+            'password' => 'password',
+        ]);
+
+        $this->assertAuthenticatedAs($student);
+        $response->assertRedirect(route('student.sessions.index', absolute: false));
     }
 
     public function test_users_can_not_authenticate_with_invalid_password(): void
@@ -42,6 +55,18 @@ class AuthenticationTest extends TestCase
         $this->assertGuest();
     }
 
+    public function test_a_disabled_account_cannot_log_in(): void
+    {
+        $user = User::factory()->create(['is_active' => false]);
+
+        $this->post('/login', [
+            'email' => $user->email,
+            'password' => 'password',
+        ]);
+
+        $this->assertGuest();
+    }
+
     public function test_users_can_logout(): void
     {
         $user = User::factory()->create();
@@ -49,6 +74,6 @@ class AuthenticationTest extends TestCase
         $response = $this->actingAs($user)->post('/logout');
 
         $this->assertGuest();
-        $response->assertRedirect('/');
+        $response->assertRedirect(route('login', absolute: false));
     }
 }
