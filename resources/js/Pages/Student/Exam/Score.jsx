@@ -1,4 +1,3 @@
-
 import { Head, Link } from "@inertiajs/react";
 
 export default function Score({ submission }) {
@@ -24,28 +23,44 @@ export default function Score({ submission }) {
                         {answers.length} Question{answers.length === 1 ? "" : "s"}
                     </h2>
                     <ul className="divide-y divide-gray-100">
-                        {answers.map((a, i) => (
-                            <li key={a.id} className="py-2 flex items-center justify-between text-sm">
-                                <span className="text-gray-600">Question {i + 1}</span>
-                                <span
-                                    className={
-                                        a.is_correct === true
-                                            ? "text-green-600 font-medium"
-                                            : a.is_correct === false
-                                              ? "text-red-600 font-medium"
-                                              : "text-gray-400"
-                                    }
-                                >
-                                    {a.is_correct === true
-                                        ? `✓ ${a.points_earned} pt`
-                                        : a.is_correct === false
-                                          ? "✕ 0 pt"
-                                          : "Pending review"}
-                                </span>
-                            </li>
-                        ))}
+                        {answers.map((a, i) => {
+                            const earned = Number(a.points_earned);
+                            const isPartial = a.is_correct === false && earned > 0;
+
+                            return (
+                                <li key={a.id} className="py-2 flex items-center justify-between text-sm">
+                                    <span className="text-gray-600">Question {i + 1}</span>
+                                    <span
+                                        className={
+                                            a.is_correct === true
+                                                ? "text-green-600 font-medium"
+                                                : isPartial
+                                                  ? "text-yellow-600 font-medium"
+                                                  : a.is_correct === false
+                                                    ? "text-red-600 font-medium"
+                                                    : "text-gray-400"
+                                        }
+                                    >
+                                        {a.is_correct === true
+                                            ? `✓ ${earned} pt`
+                                            : isPartial
+                                              ? `± ${earned} pt`
+                                              : a.is_correct === false
+                                                ? "✕ 0 pt"
+                                                : "Pending review"}
+                                    </span>
+                                </li>
+                            );
+                        })}
                     </ul>
                 </div>
+
+                <Link
+                    href={`/student/exams/${submission.exam_id}/leaderboard`}
+                    className="block text-center bg-[#1F3864] text-white py-2 rounded-lg text-sm font-semibold mb-3"
+                >
+                    View Leaderboard
+                </Link>
 
                 <Link
                     href="/student/sessions"

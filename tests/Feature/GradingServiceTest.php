@@ -159,7 +159,7 @@ class GradingServiceTest extends TestCase
         $submission = $this->makeSubmission($exam, $student);
         Answer::create([
             'submission_id' => $submission->id, 'question_id' => $question->id,
-            'response' => ['answer' => '  mitochondria  '],
+            'response' => ['answer' => '  mitochondria  '], 
         ]);
 
         $score = app(GradingService::class)->gradeSubmission($submission);
@@ -186,13 +186,14 @@ class GradingServiceTest extends TestCase
         Answer::create([
             'submission_id' => $submission->id, 'question_id' => $question->id,
             'response' => ['pairs' => [
-                ['choice_id' => $c1->id, 'match_value' => 'France'],   
+                ['choice_id' => $c1->id, 'match_value' => 'France'],  
                 ['choice_id' => $c2->id, 'match_value' => 'Germany'],  
                 ['choice_id' => $c3->id, 'match_value' => 'Italy'],    
             ]],
         ]);
 
         $score = app(GradingService::class)->gradeSubmission($submission);
+
         $this->assertEquals(6, $score->total_points_earned);
         $this->assertFalse($submission->answers()->first()->is_correct); 
     }
@@ -223,6 +224,36 @@ class GradingServiceTest extends TestCase
         $score = app(GradingService::class)->gradeSubmission($submission);
 
         $this->assertEquals(6, $score->total_points_earned);
+    }
+
+    #[Test]
+    public function a_fully_correct_matching_answer_is_marked_correct(): void
+    {
+        [$teacher, $student] = $this->makeTeacherAndStudent();
+        $exam = $this->makeExam($teacher);
+
+        $question = Question::create([
+            'exam_id' => $exam->id, 'type' => 'matching', 'prompt' => 'Match numbers to words.',
+            'points' => 4, 'order' => 1,
+        ]);
+        $c1 = Choice::create(['question_id' => $question->id, 'label' => '1', 'match_value' => 'one', 'order' => 1]);
+        $c2 = Choice::create(['question_id' => $question->id, 'label' => '2', 'match_value' => 'two', 'order' => 2]);
+
+        $submission = $this->makeSubmission($exam, $student);
+        Answer::create([
+            'submission_id' => $submission->id, 'question_id' => $question->id,
+            'response' => ['pairs' => [
+                ['choice_id' => $c1->id, 'match_value' => 'one'],
+                ['choice_id' => $c2->id, 'match_value' => 'two'],
+            ]],
+        ]);
+
+        $score = app(GradingService::class)->gradeSubmission($submission);
+        $answer = $submission->answers()->first();
+
+        $this->assertEquals(4, $answer->points_earned);
+        $this->assertTrue($answer->is_correct, 'A fully-correct matching answer must be marked is_correct = true, not just earn full points.');
+        $this->assertEquals(100, $score->percentage);
     }
 
     #[Test]
@@ -263,6 +294,7 @@ class GradingServiceTest extends TestCase
     {
         [$teacher, $student] = $this->makeTeacherAndStudent();
         $exam = $this->makeExam($teacher); 
+
         $submission = $this->makeSubmission($exam, $student);
 
         $score = app(GradingService::class)->gradeSubmission($submission);
