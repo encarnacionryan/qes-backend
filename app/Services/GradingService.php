@@ -66,7 +66,8 @@ class GradingService
             'true_false' => $this->gradeExactMatch($question, $answer),
             'identification' => $this->gradeExactMatch($question, $answer),
             'matching' => $this->gradeMatching($question, $answer),
-            default => ['is_correct' => null, 'points_earned' => 0],         };
+            default => ['is_correct' => null, 'points_earned' => 0], 
+        };
     }
 
     protected function gradeMcq(Question $question, Answer $answer): array
@@ -114,7 +115,7 @@ class GradingService
                 $correctPairs++;
             }
         }
-
+        
         $fraction = $correctPairs / $choices->count();
 
         return [

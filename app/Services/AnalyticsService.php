@@ -68,7 +68,7 @@ class AnalyticsService
                 'total_answered' => $total,
                 'correct_count' => $correct,
                 'percent_correct' => $percentCorrect,
-                'flagged' => $percentCorrect !== null && $percentCorrect < self::LOW_PERFORMANCE_THRESHOLD, // FR-7.3
+                'flagged' => $percentCorrect !== null && $percentCorrect < self::LOW_PERFORMANCE_THRESHOLD, 
             ];
         })->all();
     }

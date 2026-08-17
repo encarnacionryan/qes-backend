@@ -147,12 +147,10 @@ class QuestionController extends Controller
             'type' => ['required', Rule::in(['mcq', 'true_false', 'identification', 'matching'])],
             'prompt' => ['required', 'string'],
             'points' => ['required', 'integer', 'min:1'],
-            
             'answer' => ['required_if:type,true_false,identification', 'nullable', 'string'],
-            
             'choices' => ['required_if:type,mcq,matching', 'nullable', 'array', 'min:2'],
             'choices.*.label' => ['required_with:choices', 'string'],
-            'choices.*.is_correct' => ['nullable', 'boolean'],
+            'choices.*.is_correct' => ['nullable', 'boolean'], 
             'choices.*.match_value' => ['required_if:type,matching', 'nullable', 'string'], 
         ]);
     }

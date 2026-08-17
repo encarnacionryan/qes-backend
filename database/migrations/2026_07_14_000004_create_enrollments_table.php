@@ -14,8 +14,6 @@ return new class extends Migration
             $table->foreignId('student_id')->constrained('users')->cascadeOnDelete();
             $table->timestamp('joined_at')->useCurrent();
             $table->timestamps();
-
-            // FR-2.6: a student can only join a given class once.
             $table->unique(['school_class_id', 'student_id']);
         });
     }

@@ -7,6 +7,8 @@ export default function Sessions({ exam, sessions = [] }) {
     const { data, setData, post, processing, errors, reset } = useForm({
         visibility: "public",
         password: "",
+        opens_at: "",
+        closes_at: "",
     });
 
     function handleSubmit(e) {
@@ -79,6 +81,37 @@ export default function Sessions({ exam, sessions = [] }) {
                         </div>
                     )}
 
+                    <div className="grid grid-cols-2 gap-4">
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">
+                                Opens At <span className="text-gray-400">(optional)</span>
+                            </label>
+                            <input
+                                type="datetime-local"
+                                value={data.opens_at}
+                                onChange={(e) => setData("opens_at", e.target.value)}
+                                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm"
+                            />
+                        </div>
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">
+                                Closes At <span className="text-gray-400">(optional)</span>
+                            </label>
+                            <input
+                                type="datetime-local"
+                                value={data.closes_at}
+                                onChange={(e) => setData("closes_at", e.target.value)}
+                                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm"
+                            />
+                            {errors.closes_at && (
+                                <p className="text-red-600 text-sm mt-1">{errors.closes_at}</p>
+                            )}
+                        </div>
+                    </div>
+                    <p className="text-xs text-gray-400 -mt-2">
+                        Leave both blank to open immediately and stay open until you close it manually.
+                    </p>
+
                     <div className="flex items-center gap-3 pt-2">
                         <button
                             type="submit"
@@ -118,7 +151,7 @@ export default function Sessions({ exam, sessions = [] }) {
                             className="bg-white rounded-xl shadow p-4 flex items-center justify-between"
                         >
                             <div>
-                                <div className="flex items-center gap-2">
+                                <div className="flex items-center gap-2 flex-wrap">
                                     <span className="text-sm font-medium capitalize">{session.visibility}</span>
                                     <span
                                         className={`text-xs px-2 py-0.5 rounded-full ${
@@ -136,6 +169,12 @@ export default function Sessions({ exam, sessions = [] }) {
                                 </div>
                                 <p className="text-xs text-gray-400 mt-1">
                                     Started {new Date(session.created_at).toLocaleString()}
+                                    {session.opens_at && (
+                                        <> · Opens {new Date(session.opens_at).toLocaleString()}</>
+                                    )}
+                                    {session.closes_at && (
+                                        <> · Closes {new Date(session.closes_at).toLocaleString()}</>
+                                    )}
                                 </p>
                             </div>
                             {session.status === "open" && (

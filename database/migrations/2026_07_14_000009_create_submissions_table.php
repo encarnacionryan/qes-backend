@@ -12,18 +12,11 @@ return new class extends Migration
             $table->id();
             $table->foreignId('exam_id')->constrained()->cascadeOnDelete();
             $table->foreignId('student_id')->constrained('users')->cascadeOnDelete();
-
             $table->dateTime('started_at');
             $table->dateTime('submitted_at')->nullable();
-
             $table->enum('status', ['in_progress', 'submitted', 'graded'])->default('in_progress');
-
-            // FR-4.4: attempt number so a retake (if allowed) doesn't collide
-            // with the unique constraint below.
             $table->unsignedInteger('attempt_number')->default(1);
-
             $table->timestamps();
-
             $table->unique(['exam_id', 'student_id', 'attempt_number']);
             $table->index('status');
         });

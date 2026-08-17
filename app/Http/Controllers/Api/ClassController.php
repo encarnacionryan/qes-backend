@@ -8,7 +8,7 @@ use Illuminate\Http\Request;
 
 class ClassController extends Controller
 {
-    public function join(Request $request) 
+    public function join(Request $request)// FR-2.3
     {
         $data = $request->validate([
             'join_code' => ['required', 'string'],
@@ -21,8 +21,7 @@ class ClassController extends Controller
         abort_if(! $class, 404, 'Invalid join code.');
 
         $alreadyEnrolled = $class->enrollments()->where('student_id', $request->user()->id)->exists();
-        abort_if($alreadyEnrolled, 422, 'You are already enrolled in this class.'); // FR-2.6
-
+        abort_if($alreadyEnrolled, 422, 'You are already enrolled in this class.'); 
         $class->enrollments()->create(['student_id' => $request->user()->id]);
 
         return response()->json(['class' => $class]);

@@ -1,16 +1,23 @@
-// resources/js/Pages/Classes/Show.jsx
-//
-// Sprint 2, QES-17. Backed by Web\SchoolClassController::show, which
-// eager-loads `students`. Join code is shown large/copyable since it's
-// what the teacher actually reads aloud or writes on the board.
-
-import { useState } from "react";
-import { Head, Link, router } from "@inertiajs/react";
+import { useState, useRef } from "react";
+import { Head, Link, useForm, router } from "@inertiajs/react";
 import AuthenticatedLayout from "../../Layouts/AuthenticatedLayout";
 
 export default function Show({ class: schoolClass }) {
     const [copied, setCopied] = useState(false);
     const students = schoolClass.students || [];
+    const fileInput = useRef(null);
+    const importForm = useForm({ file: null });
+
+    function handleImport(e) {
+        e.preventDefault();
+        if (!importForm.data.file) return;
+        importForm.post(`/classes/${schoolClass.id}/import-students`, {
+            onSuccess: () => {
+                importForm.reset();
+                if (fileInput.current) fileInput.current.value = "";
+            },
+        });
+    }
 
     function copyCode() {
         navigator.clipboard?.writeText(schoolClass.join_code);
@@ -57,6 +64,35 @@ export default function Show({ class: schoolClass }) {
                     {copied ? "Copied!" : "Copy"}
                 </button>
             </div>
+
+            <section className="bg-white rounded-xl shadow p-5 mb-6">
+                <h2 className="font-semibold text-gray-700 mb-1">Bulk Import Students</h2>
+                <p className="text-xs text-gray-400 mb-3">
+                    CSV with a header row containing <code className="bg-gray-100 px-1 rounded">name</code> and{" "}
+                    <code className="bg-gray-100 px-1 rounded">email</code> columns. New accounts get a
+                    temporary password shown once on the results page — there's no email delivery on
+                    this network, so you'll need to relay it to each student directly.
+                </p>
+                <form onSubmit={handleImport} className="flex items-center gap-3">
+                    <input
+                        ref={fileInput}
+                        type="file"
+                        accept=".csv,text/csv"
+                        onChange={(e) => importForm.setData("file", e.target.files[0] || null)}
+                        className="text-sm"
+                    />
+                    <button
+                        type="submit"
+                        disabled={!importForm.data.file || importForm.processing}
+                        className="bg-[#1F3864] text-white px-4 py-2 rounded-lg text-sm font-semibold disabled:opacity-50 shrink-0"
+                    >
+                        {importForm.processing ? "Importing…" : "Import"}
+                    </button>
+                </form>
+                {importForm.errors.file && (
+                    <p className="text-red-600 text-sm mt-2">{importForm.errors.file}</p>
+                )}
+            </section>
 
             <section className="bg-white rounded-xl shadow p-5">
                 <h2 className="font-semibold text-gray-700 mb-4">

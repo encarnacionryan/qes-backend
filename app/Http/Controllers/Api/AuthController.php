@@ -48,7 +48,6 @@ class AuthController extends Controller
         }
 
         abort_if(! $user->is_active, 403, 'This account has been disabled.');
-
         $token = $user->createToken('qes-mobile', ['student'])->plainTextToken;
 
         return response()->json([

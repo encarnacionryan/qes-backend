@@ -52,6 +52,17 @@ export default function Browse({ sessions = [] }) {
                                 )}
                             </div>
 
+                            {session.opens_at && !session.is_open && (
+                                <p className="text-xs text-blue-600 mt-2">
+                                    Opens {new Date(session.opens_at).toLocaleString()}
+                                </p>
+                            )}
+                            {session.closes_at && session.is_open && (
+                                <p className="text-xs text-gray-400 mt-2">
+                                    Closes {new Date(session.closes_at).toLocaleString()}
+                                </p>
+                            )}
+
                             {passwordPromptFor === session.id ? (
                                 <form
                                     onSubmit={(e) => submitPassword(e, session.id)}
@@ -73,12 +84,19 @@ export default function Browse({ sessions = [] }) {
                                         Join
                                     </button>
                                 </form>
-                            ) : (
+                            ) : session.is_open ? (
                                 <button
                                     onClick={() => attemptJoin(session)}
                                     className="mt-4 w-full bg-[#1F3864] text-white py-2 rounded-lg text-sm font-semibold"
                                 >
                                     Join Exam
+                                </button>
+                            ) : (
+                                <button
+                                    disabled
+                                    className="mt-4 w-full bg-gray-100 text-gray-400 py-2 rounded-lg text-sm font-semibold cursor-not-allowed"
+                                >
+                                    Not Open Yet
                                 </button>
                             )}
 

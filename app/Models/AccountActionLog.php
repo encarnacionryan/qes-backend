@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class AccountActionLog extends Model
 {
-    protected $fillable = ['actor_id', 'target_user_id', 'action'];
+    protected $fillable = ['actor_id', 'target_user_id', 'target_label', 'action'];
 
     public function actor(): BelongsTo
     {

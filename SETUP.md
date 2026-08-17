@@ -97,6 +97,8 @@ database/migrations/2026_07_14_000013_create_account_action_logs_table.php
 database/migrations/2026_07_16_000001_create_exam_sessions_table.php
 database/migrations/2026_07_16_000002_add_exam_session_id_to_submissions_table.php
 database/migrations/2026_08_09_000001_fix_account_action_logs_foreign_keys.php
+database/migrations/2026_08_15_000001_add_shuffle_questions_to_exams_table.php
+database/migrations/2026_08_15_000002_add_schedule_to_exam_sessions_table.php
 
 app/Models/User.php               (replace the default one)
 app/Models/SchoolClass.php
@@ -152,6 +154,7 @@ resources/js/Pages/Classes/Index.jsx
 resources/js/Pages/Classes/Create.jsx
 resources/js/Pages/Classes/Show.jsx
 resources/js/Pages/Classes/Edit.jsx
+resources/js/Pages/Classes/ImportResults.jsx
 resources/js/Pages/Exams/Index.jsx
 resources/js/Pages/Exams/Create.jsx
 resources/js/Pages/Exams/Edit.jsx
@@ -702,7 +705,35 @@ worth knowing rather than being surprised by:
    troubleshooting note below on `account_action_logs`.
 
 Everything from registration through admin management is now built end
-to end. Remaining backlog item: Sprint 9 (QA/deployment hardening).
+to end, and Sprint 9 (QA/deployment hardening) closed out the original
+roadmap. Five features were added on top of that, all requiring
+`php artisan migrate` for two new migrations (shuffle_questions on
+exams, opens_at/closes_at on exam_sessions):
+
+1. **Bulk student import via CSV** — `SchoolClassController::importStudents`,
+   a name/email CSV with a header row. New accounts get one-time temp
+   passwords shown on a results page; existing student emails just get
+   enrolled; a teacher's email or bad rows are reported without failing
+   the whole batch.
+2. **Randomized question order per student** — `Exam::shuffle_questions`,
+   a real anti-cheat measure. Seeded by the submission ID so it's stable
+   across a page reload mid-exam but different per student/attempt; also
+   shuffles choice order within MCQ/matching questions. Grading is
+   entirely unaffected since it operates on `choice_id`, never visual
+   order. This also prompted building the first-ever Settings form on
+   `Exams/Edit.jsx` — the other 3 exam toggles never had a UI before this.
+3. **Gradebook CSV export** — a plain streamed download from the
+   leaderboard page, no library needed.
+4. **Scheduled exam windows** — optional `opens_at`/`closes_at` on a
+   session, deliberately cron-free: `ExamSession::isOpen()` just checks
+   the current time against these columns whenever it's called, so
+   nothing needs a scheduled command to "flip" a session open or closed.
+5. **Matching-question dropdown UX** — replaces the type-your-answer
+   simplification from Sprint 4 with a real dropdown, populated from a
+   seeded-shuffled pool of the correct terms
+   (`SubmissionController::attachMatchOptions`). Revealing the shuffled
+   *set* of possible answers is safe — it doesn't reveal which one pairs
+   with which row, so the answer key itself never leaves the server.
 
 `php artisan migrate` and `php artisan route:list` should both run cleanly
 now, since those only depend on the classes existing, not the Vue pages.

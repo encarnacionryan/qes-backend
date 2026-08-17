@@ -25,8 +25,7 @@ class Submission extends Model
     {
         return $this->belongsTo(Exam::class);
     }
-
-    /** New: the specific session join that produced this attempt. */
+    
     public function examSession(): BelongsTo
     {
         return $this->belongsTo(ExamSession::class);
@@ -47,7 +46,6 @@ class Submission extends Model
         return $this->hasOne(Score::class);
     }
 
-    /** Seconds between start and submission — used for leaderboard tiebreaking (FR-6.1). */
     public function completionSeconds(): ?int
     {
         if (! $this->submitted_at) {

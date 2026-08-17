@@ -27,13 +27,21 @@ class ExamSessionController extends Controller
         $data = $request->validate([
             'visibility' => ['required', 'in:public,private'],
             'password' => ['required_if:visibility,private', 'nullable', 'string', 'min:4'],
+            'opens_at' => ['nullable', 'date'],
+            'closes_at' => ['nullable', 'date'],
         ]);
+
+        if (! empty($data['opens_at']) && ! empty($data['closes_at']) && $data['closes_at'] <= $data['opens_at']) {
+            return back()->withErrors(['closes_at' => 'Close time must be after the open time.']);
+        }
 
         $session = new ExamSession([
             'exam_id' => $exam->id,
             'teacher_id' => $exam->teacher_id,
             'visibility' => $data['visibility'],
             'status' => 'open',
+            'opens_at' => $data['opens_at'] ?? null,
+            'closes_at' => $data['closes_at'] ?? null,
         ]);
         $session->setPassword($data['visibility'] === 'private' ? $data['password'] : null);
         $session->save();

@@ -20,17 +20,15 @@ self.addEventListener("activate", (event) => {
 self.addEventListener("fetch", (event) => {
   const url = new URL(event.request.url);
 
-  // Never cache API calls or exam-taking/session routes — always live.
   const isDynamic =
     url.pathname.startsWith("/api/") ||
     url.pathname.includes("/submissions/") ||
     url.pathname.includes("/sessions/");
 
   if (isDynamic || event.request.method !== "GET") {
-    return; // let the browser handle it normally (network-only)
+    return; 
   }
 
-  // Cache-first for build assets (Vite output under /build/, icons, fonts).
   if (url.pathname.startsWith("/build/") || url.pathname.startsWith("/icons/")) {
     event.respondWith(
       caches.match(event.request).then((cached) => {
@@ -47,9 +45,6 @@ self.addEventListener("fetch", (event) => {
     return;
   }
 
-  // Everything else: network-first, falling back to cache if offline.
-  // Always resolve to a real Response — respondWith() throws if handed
-  // undefined, which is what caches.match() returns on a cache miss.
   event.respondWith(
     fetch(event.request).catch(async () => {
       const cached = await caches.match(event.request);

@@ -15,6 +15,7 @@ class Exam extends Model
     protected $fillable = [
         'teacher_id', 'title', 'description', 'time_limit_minutes', 'total_points',
         'status', 'show_score_immediately', 'allow_retake', 'anonymize_leaderboard',
+        'shuffle_questions',
     ];
 
     protected function casts(): array
@@ -23,10 +24,10 @@ class Exam extends Model
             'show_score_immediately' => 'boolean',
             'allow_retake' => 'boolean',
             'anonymize_leaderboard' => 'boolean',
+            'shuffle_questions' => 'boolean',
         ];
     }
 
-    /** FR-3.6: lock editing once at least one submission exists. */
     public function hasStartedSubmissions(): bool
     {
         return $this->submissions()->exists();
@@ -54,7 +55,6 @@ class Exam extends Model
         return $this->hasMany(Submission::class);
     }
 
-    /** New: browsable/hostable instances of this exam (replaces class-gated publishing). */
     public function sessions(): HasMany
     {
         return $this->hasMany(ExamSession::class);

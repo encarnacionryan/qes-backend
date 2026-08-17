@@ -22,7 +22,7 @@ class LeaderboardService
                 [
                     'score_id' => $score->id,
                     'completion_seconds' => $submission->completionSeconds() ?? 0,
-                    'rank' => 0, 
+                    'rank' => 0,
                 ]
             );
 

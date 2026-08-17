@@ -75,7 +75,7 @@ class LeaderboardServiceTest extends TestCase
     {
         $exam = $this->makeExamWithOneQuestion();
 
-        $this->submitAndGrade($exam, 'Alice', 'wrong', 0, 60);  
+        $this->submitAndGrade($exam, 'Alice', 'wrong', 0, 60);   
         $this->submitAndGrade($exam, 'Bob', 'correct', 0, 90);   
 
         $entries = $exam->fresh()->leaderboardEntries()->with('student')->get();
@@ -90,7 +90,6 @@ class LeaderboardServiceTest extends TestCase
     public function it_uses_completion_time_as_a_tiebreaker_when_scores_are_equal(): void
     {
         $exam = $this->makeExamWithOneQuestion();
-
         $this->submitAndGrade($exam, 'Dave', 'correct', 0, 120);
         $this->submitAndGrade($exam, 'Carol', 'correct', 0, 60);
 

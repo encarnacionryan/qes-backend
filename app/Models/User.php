@@ -37,7 +37,6 @@ class User extends Authenticatable
         ];
     }
 
-    // ---- Role helpers (FR-1.5) ----
     public function isTeacher(): bool
     {
         return $this->role === 'teacher';
@@ -48,27 +47,21 @@ class User extends Authenticatable
         return $this->role === 'student';
     }
 
-    // ---- Relationships ----
-
-    /** Classes this user teaches (role = teacher). */
     public function classesTaught(): HasMany
     {
         return $this->hasMany(SchoolClass::class, 'teacher_id');
     }
 
-    /** Exams this user authored (role = teacher). */
     public function examsCreated(): HasMany
     {
         return $this->hasMany(Exam::class, 'teacher_id');
     }
 
-    /** Classes this user is enrolled in (role = student). */
     public function enrollments(): HasMany
     {
         return $this->hasMany(Enrollment::class, 'student_id');
     }
 
-    /** Exam attempts made by this user (role = student). */
     public function submissions(): HasMany
     {
         return $this->hasMany(Submission::class, 'student_id');

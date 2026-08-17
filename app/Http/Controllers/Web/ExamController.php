@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Web;
 use App\Http\Controllers\Controller;
 use App\Models\Exam;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 use Inertia\Inertia;
 
 class ExamController extends Controller
@@ -41,10 +42,10 @@ class ExamController extends Controller
         return redirect()->route('exams.edit', $exam);
     }
 
-    public function edit(Exam $exam) 
+    public function edit(Exam $exam)
     {
         $this->authorizeOwnership($exam);
-
+  
         return Inertia::render('Exams/Edit', ['exam' => $exam->load('questions.choices')]);
     }
 
@@ -63,6 +64,7 @@ class ExamController extends Controller
             'show_score_immediately' => ['boolean'],
             'allow_retake' => ['boolean'],
             'anonymize_leaderboard' => ['boolean'],
+            'shuffle_questions' => ['boolean'],
         ]);
 
         $exam->update($data);
@@ -102,7 +104,7 @@ class ExamController extends Controller
         return redirect()->route('exams.edit', $copy)->with('success', 'Exam duplicated.');
     }
 
-    public function leaderboard(Exam $exam)
+    public function leaderboard(Exam $exam) 
     {
         $this->authorizeOwnership($exam);
 
@@ -112,7 +114,34 @@ class ExamController extends Controller
         ]);
     }
 
-    public function analytics(Exam $exam, \App\Services\AnalyticsService $analytics)
+    public function exportGradebook(Exam $exam)
+    {
+        $this->authorizeOwnership($exam);
+
+        $entries = $exam->leaderboardEntries()->with('student', 'score')->get();
+        $filename = Str::slug($exam->title).'-gradebook.csv';
+
+        return response()->streamDownload(function () use ($entries) {
+            $handle = fopen('php://output', 'w');
+            fputcsv($handle, ['Rank', 'Name', 'Email', 'Points Earned', 'Points Possible', 'Percentage', 'Time Taken (seconds)']);
+
+            foreach ($entries as $entry) {
+                fputcsv($handle, [
+                    $entry->rank,
+                    $entry->student->name,
+                    $entry->student->email,
+                    $entry->score->total_points_earned,
+                    $entry->score->total_points_possible,
+                    $entry->score->percentage,
+                    $entry->completion_seconds,
+                ]);
+            }
+
+            fclose($handle);
+        }, $filename, ['Content-Type' => 'text/csv']);
+    }
+
+    public function analytics(Exam $exam, \App\Services\AnalyticsService $analytics) 
     {
         $this->authorizeOwnership($exam);
 

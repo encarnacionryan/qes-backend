@@ -9,7 +9,7 @@ use Illuminate\Http\Request;
 
 class SubmissionController extends Controller
 {
-    public function saveAnswers(Request $request, Submission $submission) 
+    public function saveAnswers(Request $request, Submission $submission)
     {
         $this->authorizeOwnership($submission);
 
@@ -29,7 +29,7 @@ class SubmissionController extends Controller
         return response()->json(['message' => 'Saved.']);
     }
 
-    public function submit(Request $request, Submission $submission, GradingService $grading)    
+    public function submit(Request $request, Submission $submission, GradingService $grading) 
     {
         $this->authorizeOwnership($submission);
 
@@ -37,6 +37,7 @@ class SubmissionController extends Controller
             $submission->update(['submitted_at' => now(), 'status' => 'submitted']);
             $grading->gradeSubmission($submission); 
         }
+\
         return response()->json($submission->fresh('score'));
     }
 

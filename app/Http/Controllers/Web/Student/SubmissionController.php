@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Web\Student;
 
 use App\Http\Controllers\Controller;
+use App\Models\Choice;
 use App\Models\Submission;
 use App\Services\GradingService;
 use App\Services\LeaderboardService;
@@ -15,13 +16,58 @@ class SubmissionController extends Controller
     {
         $this->authorizeOwnership($submission);
 
+        $exam = $submission->exam()->with(['questions' => function ($q) {
+            $q->select('id', 'exam_id', 'type', 'prompt', 'points', 'order')
+                ->with(['choices:id,question_id,label,order']); 
+        }])->first();
+
+        if ($exam->shuffle_questions) {
+            $this->shuffleForStudent($exam, $submission);
+        }
+
+        $this->attachMatchOptions($exam, $submission);
+
         return Inertia::render('Student/Exam/Take', [
             'submission' => $submission->load('answers'),
-            'exam' => $submission->exam->load(['questions' => function ($q) {
-                $q->select('id', 'exam_id', 'type', 'prompt', 'points', 'order')
-                    ->with(['choices:id,question_id,label,order']); 
-            }]),
+            'exam' => $exam,
         ]);
+    }
+
+    protected function attachMatchOptions($exam, Submission $submission): void
+    {
+        foreach ($exam->questions as $question) {
+            if ($question->type !== 'matching') {
+                continue;
+            }
+
+            $values = Choice::where('question_id', $question->id)->pluck('match_value');
+            $seed = ($submission->id * 100000) + $question->id + 500000; 
+            $question->setAttribute('match_options', $this->seededShuffle($values, $seed)->values());
+        }
+    }
+
+    protected function shuffleForStudent($exam, Submission $submission): void
+    {
+        $questions = $this->seededShuffle($exam->questions, $submission->id);
+
+        foreach ($questions as $question) {
+            if (in_array($question->type, ['mcq', 'matching'], true)) {
+                $seed = ($submission->id * 100000) + $question->id;
+                $question->setRelation('choices', $this->seededShuffle($question->choices, $seed));
+            }
+        }
+
+        $exam->setRelation('questions', $questions);
+    }
+
+    protected function seededShuffle($items, int $seed)
+    {
+        $array = $items->all();
+        mt_srand($seed);
+        shuffle($array);
+        mt_srand();
+
+        return collect($array)->values();
     }
 
     public function saveAnswers(Request $request, Submission $submission) 
@@ -44,7 +90,7 @@ class SubmissionController extends Controller
         return response()->json(['message' => 'Saved.']);
     }
 
-    public function submit(Submission $submission, GradingService $grading, LeaderboardService $leaderboard) // FR-4.6, FR-5.1
+    public function submit(Submission $submission, GradingService $grading, LeaderboardService $leaderboard) 
     {
         $this->authorizeOwnership($submission);
 
@@ -57,7 +103,7 @@ class SubmissionController extends Controller
         return redirect()->route('student.submissions.score', $submission);
     }
 
-    public function score(Submission $submission) 
+    public function score(Submission $submission)
     {
         $this->authorizeOwnership($submission);
 

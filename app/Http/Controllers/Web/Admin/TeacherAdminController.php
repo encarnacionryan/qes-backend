@@ -42,10 +42,11 @@ class TeacherAdminController extends Controller
         ]);
 
         $this->logAction($teacher, 'account_created');
+
         return back()->with('temp_password', $tempPassword);
     }
 
-    public function disable(User $teacher) 
+    public function disable(User $teacher)
     {
         if ($teacher->id === auth()->id()) {
             return back()->with('error', "You can't disable your own account.");

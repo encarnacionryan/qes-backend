@@ -1,8 +1,3 @@
-// resources/js/Pages/Classes/Edit.jsx
-//
-// Sprint 2, QES-14 (edit), QES-18 (archive/delete). Backed by
-// Web\SchoolClassController::update / archive / destroy.
-
 import { Head, Link, useForm, router } from "@inertiajs/react";
 import AuthenticatedLayout from "../../Layouts/AuthenticatedLayout";
 

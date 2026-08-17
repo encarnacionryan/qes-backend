@@ -12,9 +12,17 @@ class ExamSession extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['exam_id', 'teacher_id', 'visibility', 'password_hash', 'status'];
+    protected $fillable = ['exam_id', 'teacher_id', 'visibility', 'password_hash', 'status', 'opens_at', 'closes_at'];
 
     protected $hidden = ['password_hash'];
+
+    protected function casts(): array
+    {
+        return [
+            'opens_at' => 'datetime',
+            'closes_at' => 'datetime',
+        ];
+    }
 
     public function exam(): BelongsTo
     {
@@ -38,7 +46,26 @@ class ExamSession extends Model
 
     public function isOpen(): bool
     {
-        return $this->status === 'open';
+        if ($this->status !== 'open') {
+            return false;
+        }
+
+        $now = now();
+
+        if ($this->opens_at && $now->lt($this->opens_at)) {
+            return false;
+        }
+
+        if ($this->closes_at && $now->gt($this->closes_at)) {
+            return false;
+        }
+
+        return true;
+    }
+
+    public function isScheduledForLater(): bool
+    {
+        return $this->status === 'open' && $this->opens_at && now()->lt($this->opens_at);
     }
 
     public function checkPassword(?string $password): bool

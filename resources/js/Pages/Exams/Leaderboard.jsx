@@ -12,7 +12,17 @@ export default function Leaderboard({ exam, entries = [] }) {
                 ← Back to {exam.title}
             </Link>
 
-            <h1 className="text-2xl font-bold text-[#1F3864] mt-2 mb-6">Leaderboard</h1>
+            <div className="flex items-center justify-between mt-2 mb-6">
+                <h1 className="text-2xl font-bold text-[#1F3864]">Leaderboard</h1>
+                {entries.length > 0 && (
+                    <a
+                        href={`/exams/${exam.id}/gradebook.csv`}
+                        className="bg-white border border-[#1F3864] text-[#1F3864] px-4 py-2 rounded-lg text-sm font-semibold"
+                    >
+                        Export CSV
+                    </a>
+                )}
+            </div>
 
             {entries.length === 0 ? (
                 <p className="text-gray-500">No students have completed this exam yet.</p>

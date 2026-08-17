@@ -4,9 +4,6 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-// An exam can be published to more than one class, each with its own
-// availability window (FR-3.5). This pivot table is what makes an exam
-// actually visible to students (FR-4.1).
 return new class extends Migration
 {
     public function up(): void

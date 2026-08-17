@@ -4,9 +4,6 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-// FR-1.4: Sanctum token issuance for the mobile app.
-// Ships with `php artisan install:api` / the Sanctum package normally —
-// included explicitly here so the schema is self-documenting.
 return new class extends Migration
 {
     public function up(): void

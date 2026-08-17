@@ -15,13 +15,18 @@ class SessionController extends Controller
             ->with(['exam:id,title,time_limit_minutes,total_points', 'teacher:id,name'])
             ->latest()
             ->get()
+            ->filter(fn (ExamSession $session) => ! ($session->closes_at && now()->gt($session->closes_at)))
             ->map(fn (ExamSession $session) => [
                 'id' => $session->id,
                 'visibility' => $session->visibility,
                 'requires_password' => $session->isPrivate(),
                 'exam' => $session->exam,
                 'teacher' => $session->teacher,
-            ]);
+                'is_open' => $session->isOpen(),
+                'opens_at' => $session->opens_at,
+                'closes_at' => $session->closes_at,
+            ])
+            ->values();
 
         return Inertia::render('Student/Sessions/Browse', ['sessions' => $sessions]);
     }
@@ -29,8 +34,11 @@ class SessionController extends Controller
     public function join(Request $request, ExamSession $examSession)
     {
         if (! $examSession->isOpen()) {
-            return redirect()->route('student.sessions.index')
-                ->with('error', 'That exam session is no longer open.');
+            $message = $examSession->isScheduledForLater()
+                ? 'This session hasn\'t opened yet — check back at its scheduled time.'
+                : 'That exam session is no longer open.';
+
+            return redirect()->route('student.sessions.index')->with('error', $message);
         }
 
         $data = $request->validate(['password' => ['nullable', 'string']]);

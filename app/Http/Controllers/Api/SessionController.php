@@ -61,7 +61,7 @@ class SessionController extends Controller
             }]),
         ]);
     }
-
+    
     public function show(Request $request, ExamSession $examSession)
     {
         $hasJoined = $examSession->submissions()

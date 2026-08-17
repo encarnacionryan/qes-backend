@@ -9,11 +9,10 @@ use Illuminate\Http\Request;
 
 class LeaderboardController extends Controller
 {
-    public function show(Request $request, Exam $exam) 
-    {
+    public function show(Request $request, Exam $exam)     {
         $entries = $exam->leaderboardEntries()->with('student:id,name')->get();
 
-        if ($exam->anonymize_leaderboard) { 
+        if ($exam->anonymize_leaderboard) {
             $entries->transform(function ($entry) {
                 $entry->student->name = 'Student #'.$entry->student_id;
 

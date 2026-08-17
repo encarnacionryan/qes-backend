@@ -27,7 +27,6 @@ class SchoolClass extends Model
         });
     }
 
-    /** FR-2.2: generate a short, unique, human-readable join code. */
     public static function generateUniqueJoinCode(): string
     {
         do {

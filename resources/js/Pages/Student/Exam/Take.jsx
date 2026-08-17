@@ -65,7 +65,7 @@ export default function Take({ submission, exam }) {
             .put(`/student/submissions/${submission.id}/answers`, {
                 answers: [{ question_id: questionId, response }],
             })
-            .catch(() => 
+            .catch(() => {
                 return new Promise((resolve) => {
                     setTimeout(() => {
                         axios
@@ -96,7 +96,7 @@ export default function Take({ submission, exam }) {
         saveTimers.current[question.id] = setTimeout(() => {
             saveAnswer(question.id, pendingSaves.current[question.id]);
             delete pendingSaves.current[question.id];
-        }, 600);
+        }, 600); 
     }
 
     function updateMatchingAnswer(question, choiceId, value) {
@@ -215,15 +215,20 @@ export default function Take({ submission, exam }) {
                                         <span className="flex-1 text-sm text-gray-700">
                                             {choice.label}
                                         </span>
-                                        <input
-                                            type="text"
-                                            placeholder="Match"
+                                        <select
                                             value={(answers[q.id] || {})[choice.id] || ""}
                                             onChange={(e) =>
                                                 updateMatchingAnswer(q, choice.id, e.target.value)
                                             }
-                                            className="flex-1 border border-gray-300 rounded-lg px-3 py-2 text-sm"
-                                        />
+                                            className="flex-1 border border-gray-300 rounded-lg px-3 py-2 text-sm bg-white"
+                                        >
+                                            <option value="">Select a match…</option>
+                                            {(q.match_options || []).map((opt, i) => (
+                                                <option key={i} value={opt}>
+                                                    {opt}
+                                                </option>
+                                            ))}
+                                        </select>
                                     </div>
                                 ))}
                             </div>

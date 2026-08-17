@@ -4,8 +4,6 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-// Named `school_classes` rather than `classes` to avoid clashing with the
-// reserved PHP keyword `class` when referenced loosely in code/docs.
 return new class extends Migration
 {
     public function up(): void
@@ -16,11 +14,8 @@ return new class extends Migration
             $table->string('name');
             $table->string('subject')->nullable();
             $table->string('section')->nullable();
-
-            // FR-2.2: unique join code students use to enroll.
             $table->string('join_code', 8)->unique();
-
-            $table->boolean('is_archived')->default(false); // FR-2.5
+            $table->boolean('is_archived')->default(false);
             $table->timestamps();
         });
     }

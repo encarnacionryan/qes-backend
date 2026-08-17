@@ -1,7 +1,3 @@
-// resources/js/Pages/Classes/Index.jsx
-//
-// Sprint 2, QES-14/QES-18. Backed by Web\SchoolClassController::index.
-
 import { Head, Link, router } from "@inertiajs/react";
 import AuthenticatedLayout from "../../Layouts/AuthenticatedLayout";
 

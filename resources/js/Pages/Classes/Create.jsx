@@ -1,8 +1,3 @@
-// resources/js/Pages/Classes/Create.jsx
-//
-// Sprint 2, QES-14. Backed by Web\SchoolClassController::store.
-// join_code is auto-generated server-side (FR-2.2) — nothing to enter here.
-
 import { Head, Link, useForm } from "@inertiajs/react";
 import AuthenticatedLayout from "../../Layouts/AuthenticatedLayout";
 

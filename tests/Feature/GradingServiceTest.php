@@ -136,7 +136,7 @@ class GradingServiceTest extends TestCase
         $submission = $this->makeSubmission($exam, $student);
         Answer::create([
             'submission_id' => $submission->id, 'question_id' => $question->id,
-            'response' => ['answer' => 'true'], 
+            'response' => ['answer' => 'true'],
         ]);
 
         $score = app(GradingService::class)->gradeSubmission($submission);
@@ -159,7 +159,7 @@ class GradingServiceTest extends TestCase
         $submission = $this->makeSubmission($exam, $student);
         Answer::create([
             'submission_id' => $submission->id, 'question_id' => $question->id,
-            'response' => ['answer' => '  mitochondria  '], 
+            'response' => ['answer' => '  mitochondria  '],
         ]);
 
         $score = app(GradingService::class)->gradeSubmission($submission);
@@ -188,14 +188,14 @@ class GradingServiceTest extends TestCase
             'response' => ['pairs' => [
                 ['choice_id' => $c1->id, 'match_value' => 'France'],  
                 ['choice_id' => $c2->id, 'match_value' => 'Germany'],  
-                ['choice_id' => $c3->id, 'match_value' => 'Italy'],    
+                ['choice_id' => $c3->id, 'match_value' => 'Italy'],
             ]],
         ]);
 
         $score = app(GradingService::class)->gradeSubmission($submission);
 
         $this->assertEquals(6, $score->total_points_earned);
-        $this->assertFalse($submission->answers()->first()->is_correct); 
+        $this->assertFalse($submission->answers()->first()->is_correct);
     }
 
     #[Test]
@@ -278,7 +278,6 @@ class GradingServiceTest extends TestCase
         ]);
 
         $score = app(GradingService::class)->gradeSubmission($submission);
-
         $this->assertEquals(10, $score->total_points_possible);
         $this->assertEquals(5, $score->total_points_earned);
         $this->assertEquals(50, $score->percentage);
