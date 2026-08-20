@@ -66,6 +66,7 @@ export default function Take({ submission, exam }) {
                 answers: [{ question_id: questionId, response }],
             })
             .catch(() => {
+
                 return new Promise((resolve) => {
                     setTimeout(() => {
                         axios
@@ -92,11 +93,12 @@ export default function Take({ submission, exam }) {
         setAnswers((prev) => ({ ...prev, [question.id]: value }));
 
         clearTimeout(saveTimers.current[question.id]);
+
         pendingSaves.current[question.id] = toResponse(question, value);
         saveTimers.current[question.id] = setTimeout(() => {
             saveAnswer(question.id, pendingSaves.current[question.id]);
             delete pendingSaves.current[question.id];
-        }, 600); 
+        }, 600);
     }
 
     function updateMatchingAnswer(question, choiceId, value) {
@@ -132,16 +134,16 @@ export default function Take({ submission, exam }) {
     const isLowTime = remainingMs < 60000;
 
     return (
-        <div className="min-h-screen bg-gray-50">
+        <div className="min-h-screen bg-[#EFF5F0]">
             <Head title={exam.title} />
 
             <div
                 className={`sticky top-0 z-10 px-4 py-3 flex items-center justify-between text-white ${
-                    isLowTime ? "bg-red-600" : "bg-[#1F3864]"
+                    isLowTime ? "bg-red-600" : "bg-[#1B3A34]"
                 }`}
             >
                 <h1 className="font-semibold truncate">{exam.title}</h1>
-                <span className="font-mono text-lg tabular-nums">
+                <span className="font-data text-xl tabular-nums">
                     {String(minutes).padStart(2, "0")}:{String(seconds).padStart(2, "0")}
                 </span>
             </div>
@@ -165,7 +167,7 @@ export default function Take({ submission, exam }) {
                                 {q.choices.map((choice) => (
                                     <label
                                         key={choice.id}
-                                        className="flex items-center gap-2 border border-gray-200 rounded-lg px-3 py-2 cursor-pointer has-[:checked]:border-[#1F3864] has-[:checked]:bg-blue-50"
+                                        className="flex items-center gap-2 border border-gray-200 rounded-lg px-3 py-2 cursor-pointer has-[:checked]:border-[#1B3A34] has-[:checked]:bg-blue-50"
                                     >
                                         <input
                                             type="radio"
@@ -184,7 +186,7 @@ export default function Take({ submission, exam }) {
                                 {["true", "false"].map((val) => (
                                     <label
                                         key={val}
-                                        className="flex-1 flex items-center justify-center gap-2 border border-gray-200 rounded-lg px-3 py-2 cursor-pointer capitalize has-[:checked]:border-[#1F3864] has-[:checked]:bg-blue-50"
+                                        className="flex-1 flex items-center justify-center gap-2 border border-gray-200 rounded-lg px-3 py-2 cursor-pointer capitalize has-[:checked]:border-[#1B3A34] has-[:checked]:bg-blue-50"
                                     >
                                         <input
                                             type="radio"
@@ -239,7 +241,7 @@ export default function Take({ submission, exam }) {
                 <button
                     onClick={() => handleSubmit(false)}
                     disabled={submitting}
-                    className="w-full bg-[#1F3864] text-white py-3 rounded-lg font-semibold disabled:opacity-60"
+                    className="w-full bg-[#1B3A34] text-white py-3 rounded-lg font-semibold disabled:opacity-60"
                 >
                     {submitting ? "Submitting…" : "Submit Exam"}
                 </button>

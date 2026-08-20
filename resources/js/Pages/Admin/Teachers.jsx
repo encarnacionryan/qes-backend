@@ -47,7 +47,7 @@ export default function Teachers({ teachers = [], students = [], logs = [] }) {
         <AuthenticatedLayout>
             <Head title="Admin — Teachers" />
 
-            <h1 className="text-2xl font-bold text-[#1F3864] mb-6">User Management</h1>
+            <h1 className="font-display text-3xl font-semibold text-[#1B3A34] mb-6">User Management</h1>
 
             {flash?.temp_password && (
                 <div className="bg-yellow-50 border border-yellow-300 rounded-xl p-5 mb-6 flex items-center justify-between">
@@ -78,7 +78,7 @@ export default function Teachers({ teachers = [], students = [], logs = [] }) {
                     <h2 className="font-semibold text-gray-700">Teachers</h2>
                     <button
                         onClick={() => setShowCreate((v) => !v)}
-                        className="bg-[#1F3864] text-white px-4 py-2 rounded-lg text-sm font-semibold"
+                        className="bg-[#1B3A34] text-white px-4 py-2 rounded-lg text-sm font-semibold"
                     >
                         {showCreate ? "Cancel" : "+ Add Teacher"}
                     </button>
@@ -110,7 +110,7 @@ export default function Teachers({ teachers = [], students = [], logs = [] }) {
                         <button
                             type="submit"
                             disabled={processing}
-                            className="bg-[#1F3864] text-white px-4 py-2 rounded-lg text-sm font-semibold disabled:opacity-60"
+                            className="bg-[#1B3A34] text-white px-4 py-2 rounded-lg text-sm font-semibold disabled:opacity-60"
                         >
                             {processing ? "Creating…" : "Create Teacher Account"}
                         </button>
@@ -119,7 +119,7 @@ export default function Teachers({ teachers = [], students = [], logs = [] }) {
 
                 <div className="bg-white rounded-xl shadow overflow-hidden">
                     <table className="w-full text-sm">
-                        <thead className="bg-gray-50 text-gray-500 text-xs uppercase tracking-wide">
+                        <thead className="bg-[#EFF5F0] text-gray-500 text-xs uppercase tracking-wide">
                             <tr>
                                 <th className="text-left px-5 py-2">Name</th>
                                 <th className="text-left px-5 py-2">Email</th>
@@ -133,7 +133,7 @@ export default function Teachers({ teachers = [], students = [], logs = [] }) {
                                     <td className="px-5 py-3 text-gray-800">
                                         {t.name}
                                         {t.is_lead_teacher && (
-                                            <span className="ml-2 text-xs bg-blue-100 text-[#1F3864] px-2 py-0.5 rounded-full">
+                                            <span className="ml-2 text-xs bg-blue-100 text-[#1B3A34] px-2 py-0.5 rounded-full">
                                                 Lead
                                             </span>
                                         )}
@@ -153,7 +153,7 @@ export default function Teachers({ teachers = [], students = [], logs = [] }) {
                                     <td className="px-5 py-3 text-right space-x-3 whitespace-nowrap">
                                         <button
                                             onClick={() => resetPassword(t)}
-                                            className="text-[#1F3864] underline text-sm"
+                                            className="text-[#1B3A34] underline text-sm"
                                         >
                                             Reset Password
                                         </button>
@@ -195,7 +195,7 @@ export default function Teachers({ teachers = [], students = [], logs = [] }) {
                 <h2 className="font-semibold text-gray-700 mb-3">Students</h2>
                 <div className="bg-white rounded-xl shadow overflow-hidden">
                     <table className="w-full text-sm">
-                        <thead className="bg-gray-50 text-gray-500 text-xs uppercase tracking-wide">
+                        <thead className="bg-[#EFF5F0] text-gray-500 text-xs uppercase tracking-wide">
                             <tr>
                                 <th className="text-left px-5 py-2">Name</th>
                                 <th className="text-left px-5 py-2">Email</th>
@@ -210,7 +210,7 @@ export default function Teachers({ teachers = [], students = [], logs = [] }) {
                                     <td className="px-5 py-3 text-right">
                                         <button
                                             onClick={() => resetPassword(s)}
-                                            className="text-[#1F3864] underline text-sm"
+                                            className="text-[#1B3A34] underline text-sm"
                                         >
                                             Reset Password
                                         </button>
@@ -234,7 +234,7 @@ export default function Teachers({ teachers = [], students = [], logs = [] }) {
                 <h2 className="font-semibold text-gray-700 mb-3">Recent Activity</h2>
                 <div className="bg-white rounded-xl shadow overflow-hidden">
                     <table className="w-full text-sm">
-                        <thead className="bg-gray-50 text-gray-500 text-xs uppercase tracking-wide">
+                        <thead className="bg-[#EFF5F0] text-gray-500 text-xs uppercase tracking-wide">
                             <tr>
                                 <th className="text-left px-5 py-2">When</th>
                                 <th className="text-left px-5 py-2">By</th>

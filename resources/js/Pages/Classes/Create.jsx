@@ -18,7 +18,7 @@ export default function Create() {
             <Head title="New Class" />
 
             <div className="max-w-lg">
-                <h1 className="text-2xl font-bold text-[#1F3864] mb-6">Create a Class</h1>
+                <h1 className="font-display text-3xl font-semibold text-[#1B3A34] mb-6">Create a Class</h1>
 
                 <form onSubmit={handleSubmit} className="bg-white rounded-xl shadow p-6 space-y-4">
                     <div>
@@ -30,7 +30,7 @@ export default function Create() {
                             value={data.name}
                             onChange={(e) => setData("name", e.target.value)}
                             placeholder="e.g. Grade 10 - Science"
-                            className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#1F3864]"
+                            className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#1B3A34]"
                             autoFocus
                         />
                         {errors.name && <p className="text-red-600 text-sm mt-1">{errors.name}</p>}
@@ -45,7 +45,7 @@ export default function Create() {
                             value={data.subject}
                             onChange={(e) => setData("subject", e.target.value)}
                             placeholder="e.g. Biology"
-                            className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#1F3864]"
+                            className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#1B3A34]"
                         />
                     </div>
 
@@ -58,7 +58,7 @@ export default function Create() {
                             value={data.section}
                             onChange={(e) => setData("section", e.target.value)}
                             placeholder="e.g. Section A"
-                            className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#1F3864]"
+                            className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#1B3A34]"
                         />
                     </div>
 
@@ -66,7 +66,7 @@ export default function Create() {
                         <button
                             type="submit"
                             disabled={processing}
-                            className="bg-[#1F3864] text-white px-5 py-2 rounded-lg text-sm font-semibold disabled:opacity-60"
+                            className="bg-[#1B3A34] text-white px-5 py-2 rounded-lg text-sm font-semibold disabled:opacity-60"
                         >
                             {processing ? "Creating…" : "Create Class"}
                         </button>

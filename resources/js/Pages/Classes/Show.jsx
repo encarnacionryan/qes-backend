@@ -36,7 +36,7 @@ export default function Show({ class: schoolClass }) {
 
             <div className="flex items-start justify-between mb-6">
                 <div>
-                    <h1 className="text-2xl font-bold text-[#1F3864]">{schoolClass.name}</h1>
+                    <h1 className="font-display text-3xl font-semibold text-[#1B3A34]">{schoolClass.name}</h1>
                     <p className="text-sm text-gray-500 mt-1">
                         {schoolClass.subject || "No subject"}
                         {schoolClass.section ? ` · ${schoolClass.section}` : ""}
@@ -44,16 +44,16 @@ export default function Show({ class: schoolClass }) {
                 </div>
                 <Link
                     href={`/classes/${schoolClass.id}/edit`}
-                    className="bg-white border border-[#1F3864] text-[#1F3864] px-4 py-2 rounded-lg text-sm font-semibold"
+                    className="bg-white border border-[#1B3A34] text-[#1B3A34] px-4 py-2 rounded-lg text-sm font-semibold"
                 >
                     Edit Class
                 </Link>
             </div>
 
-            <div className="bg-[#1F3864] text-white rounded-xl p-5 mb-6 flex items-center justify-between">
+            <div className="bg-[#1B3A34] text-white rounded-xl p-5 mb-6 flex items-center justify-between">
                 <div>
                     <p className="text-xs opacity-80 uppercase tracking-wide">Join Code</p>
-                    <p className="text-3xl font-mono font-bold tracking-widest">
+                    <p className="text-3xl font-data font-semibold tracking-widest">
                         {schoolClass.join_code}
                     </p>
                 </div>
@@ -84,7 +84,7 @@ export default function Show({ class: schoolClass }) {
                     <button
                         type="submit"
                         disabled={!importForm.data.file || importForm.processing}
-                        className="bg-[#1F3864] text-white px-4 py-2 rounded-lg text-sm font-semibold disabled:opacity-50 shrink-0"
+                        className="bg-[#1B3A34] text-white px-4 py-2 rounded-lg text-sm font-semibold disabled:opacity-50 shrink-0"
                     >
                         {importForm.processing ? "Importing…" : "Import"}
                     </button>

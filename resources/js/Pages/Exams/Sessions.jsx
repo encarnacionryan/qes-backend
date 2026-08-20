@@ -30,11 +30,11 @@ export default function Sessions({ exam, sessions = [] }) {
         <AuthenticatedLayout>
             <Head title={`Sessions — ${exam.title}`} />
 
-            <Link href={`/exams/${exam.id}/edit`} className="text-sm text-[#1F3864] underline">
+            <Link href={`/exams/${exam.id}/edit`} className="text-sm text-[#1B3A34] underline">
                 ← Back to {exam.title}
             </Link>
 
-            <h1 className="text-2xl font-bold text-[#1F3864] mt-2 mb-6">Host a Session</h1>
+            <h1 className="font-display text-3xl font-semibold text-[#1B3A34] mt-2 mb-6">Host a Session</h1>
 
             {showForm ? (
                 <form onSubmit={handleSubmit} className="bg-white rounded-xl shadow p-6 space-y-4 max-w-md mb-8">
@@ -48,7 +48,7 @@ export default function Sessions({ exam, sessions = [] }) {
                                     onClick={() => setData("visibility", v)}
                                     className={`py-2 rounded-lg text-sm font-semibold capitalize border ${
                                         data.visibility === v
-                                            ? "bg-[#1F3864] text-white border-[#1F3864]"
+                                            ? "bg-[#1B3A34] text-white border-[#1B3A34]"
                                             : "bg-white text-gray-600 border-gray-300"
                                     }`}
                                 >
@@ -116,7 +116,7 @@ export default function Sessions({ exam, sessions = [] }) {
                         <button
                             type="submit"
                             disabled={processing}
-                            className="bg-[#1F3864] text-white px-5 py-2 rounded-lg text-sm font-semibold disabled:opacity-60"
+                            className="bg-[#1B3A34] text-white px-5 py-2 rounded-lg text-sm font-semibold disabled:opacity-60"
                         >
                             {processing ? "Starting…" : "Start Session"}
                         </button>
@@ -134,7 +134,7 @@ export default function Sessions({ exam, sessions = [] }) {
             ) : (
                 <button
                     onClick={() => setShowForm(true)}
-                    className="mb-8 bg-[#1F3864] text-white px-5 py-2 rounded-lg text-sm font-semibold"
+                    className="mb-8 bg-[#1B3A34] text-white px-5 py-2 rounded-lg text-sm font-semibold"
                 >
                     + Start Another Session
                 </button>
@@ -162,7 +162,7 @@ export default function Sessions({ exam, sessions = [] }) {
                                     >
                                         {session.status}
                                     </span>
-                                    <span className="text-xs bg-blue-50 text-[#1F3864] px-2 py-0.5 rounded-full">
+                                    <span className="text-xs bg-blue-50 text-[#1B3A34] px-2 py-0.5 rounded-full">
                                         {session.submissions_count}{" "}
                                         student{session.submissions_count === 1 ? "" : "s"} joined
                                     </span>

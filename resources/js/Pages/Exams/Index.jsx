@@ -13,10 +13,10 @@ export default function Index({ exams = [] }) {
             <Head title="Exams" />
 
             <div className="flex items-center justify-between mb-6">
-                <h1 className="text-2xl font-bold text-[#1F3864]">Your Exams</h1>
+                <h1 className="font-display text-3xl font-semibold text-[#1B3A34]">Your Exams</h1>
                 <Link
                     href="/exams/create"
-                    className="bg-[#1F3864] text-white px-4 py-2 rounded-lg text-sm font-semibold"
+                    className="bg-[#1B3A34] text-white px-4 py-2 rounded-lg text-sm font-semibold"
                 >
                     + New Exam
                 </Link>
@@ -25,7 +25,7 @@ export default function Index({ exams = [] }) {
             {exams.length === 0 ? (
                 <div className="bg-white rounded-xl shadow p-8 text-center">
                     <p className="text-gray-500 mb-4">You haven't created any exams yet.</p>
-                    <Link href="/exams/create" className="text-[#1F3864] underline font-medium">
+                    <Link href="/exams/create" className="text-[#1B3A34] underline font-medium">
                         Create your first exam
                     </Link>
                 </div>
@@ -51,16 +51,16 @@ export default function Index({ exams = [] }) {
                             </p>
 
                             <div className="mt-4 flex gap-3 text-sm">
-                                <Link href={`/exams/${exam.id}/edit`} className="text-[#1F3864] underline">
+                                <Link href={`/exams/${exam.id}/edit`} className="text-[#1B3A34] underline">
                                     Edit Questions
                                 </Link>
-                                <Link href={`/exams/${exam.id}/sessions`} className="text-[#1F3864] underline">
+                                <Link href={`/exams/${exam.id}/sessions`} className="text-[#1B3A34] underline">
                                     Host Session
                                 </Link>
-                                <Link href={`/exams/${exam.id}/leaderboard`} className="text-[#1F3864] underline">
+                                <Link href={`/exams/${exam.id}/leaderboard`} className="text-[#1B3A34] underline">
                                     Leaderboard
                                 </Link>
-                                <Link href={`/exams/${exam.id}/analytics`} className="text-[#1F3864] underline">
+                                <Link href={`/exams/${exam.id}/analytics`} className="text-[#1B3A34] underline">
                                     Analytics
                                 </Link>
                             </div>

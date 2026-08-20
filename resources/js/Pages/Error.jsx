@@ -30,22 +30,22 @@ export default function Error({ status }) {
     };
 
     return (
-        <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4">
+        <div className="min-h-screen bg-[#EFF5F0] flex items-center justify-center px-4">
             <Head title={title} />
             <div className="max-w-sm text-center">
-                <p className="text-6xl font-bold text-[#1F3864] mb-2">{status}</p>
+                <p className="text-6xl font-bold text-[#1B3A34] mb-2">{status}</p>
                 <h1 className="text-xl font-semibold text-gray-800 mb-2">{title}</h1>
                 <p className="text-sm text-gray-500 mb-6">{body}</p>
                 <div className="flex items-center justify-center gap-3">
                     <button
                         onClick={() => window.location.reload()}
-                        className="bg-[#1F3864] text-white px-4 py-2 rounded-lg text-sm font-semibold"
+                        className="bg-[#1B3A34] text-white px-4 py-2 rounded-lg text-sm font-semibold"
                     >
                         Refresh
                     </button>
                     <Link
                         href="/"
-                        className="bg-white border border-[#1F3864] text-[#1F3864] px-4 py-2 rounded-lg text-sm font-semibold"
+                        className="bg-white border border-[#1B3A34] text-[#1B3A34] px-4 py-2 rounded-lg text-sm font-semibold"
                     >
                         Go Home
                     </Link>

@@ -18,7 +18,7 @@ export default function Create() {
             <Head title="New Exam" />
 
             <div className="max-w-lg">
-                <h1 className="text-2xl font-bold text-[#1F3864] mb-6">Create an Exam</h1>
+                <h1 className="font-display text-3xl font-semibold text-[#1B3A34] mb-6">Create an Exam</h1>
 
                 <form onSubmit={handleSubmit} className="bg-white rounded-xl shadow p-6 space-y-4">
                     <div>
@@ -30,7 +30,7 @@ export default function Create() {
                             value={data.title}
                             onChange={(e) => setData("title", e.target.value)}
                             placeholder="e.g. Chapter 4 Quiz"
-                            className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#1F3864]"
+                            className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#1B3A34]"
                             autoFocus
                         />
                         {errors.title && <p className="text-red-600 text-sm mt-1">{errors.title}</p>}
@@ -44,7 +44,7 @@ export default function Create() {
                             value={data.description}
                             onChange={(e) => setData("description", e.target.value)}
                             rows={3}
-                            className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#1F3864]"
+                            className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#1B3A34]"
                         />
                     </div>
 
@@ -57,7 +57,7 @@ export default function Create() {
                             min={1}
                             value={data.time_limit_minutes}
                             onChange={(e) => setData("time_limit_minutes", e.target.value)}
-                            className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#1F3864]"
+                            className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#1B3A34]"
                         />
                         {errors.time_limit_minutes && (
                             <p className="text-red-600 text-sm mt-1">{errors.time_limit_minutes}</p>
@@ -68,7 +68,7 @@ export default function Create() {
                         <button
                             type="submit"
                             disabled={processing}
-                            className="bg-[#1F3864] text-white px-5 py-2 rounded-lg text-sm font-semibold disabled:opacity-60"
+                            className="bg-[#1B3A34] text-white px-5 py-2 rounded-lg text-sm font-semibold disabled:opacity-60"
                         >
                             {processing ? "Creating…" : "Create & Add Questions"}
                         </button>

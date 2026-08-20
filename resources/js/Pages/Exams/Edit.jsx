@@ -22,7 +22,7 @@ function blankForm() {
 }
 
 export default function Edit({ exam }) {
-    const [editingId, setEditingId] = useState(null); 
+    const [editingId, setEditingId] = useState(null); // null = adding new
     const [showForm, setShowForm] = useState(false);
     const { data, setData, post, put, processing, errors, reset, transform } = useForm(blankForm());
     const { errors: pageErrors } = usePage().props;
@@ -81,7 +81,6 @@ export default function Edit({ exam }) {
     function updateChoice(index, field, value) {
         const next = [...data.choices];
         next[index] = { ...next[index], [field]: value };
-
         if (field === "is_correct" && value === true && data.type === "mcq") {
             next.forEach((c, i) => {
                 if (i !== index) c.is_correct = false;
@@ -141,7 +140,7 @@ export default function Edit({ exam }) {
 
             <div className="flex items-start justify-between mb-6">
                 <div>
-                    <h1 className="text-2xl font-bold text-[#1F3864]">{exam.title}</h1>
+                    <h1 className="font-display text-3xl font-semibold text-[#1B3A34]">{exam.title}</h1>
                     <p className="text-sm text-gray-500 mt-1">
                         {exam.time_limit_minutes} min · {exam.total_points} total points ·{" "}
                         {questions.length} question{questions.length === 1 ? "" : "s"}
@@ -150,19 +149,19 @@ export default function Edit({ exam }) {
                 <div className="flex gap-2">
                     <Link
                         href={`/exams/${exam.id}/analytics`}
-                        className="bg-white border border-[#1F3864] text-[#1F3864] px-4 py-2 rounded-lg text-sm font-semibold"
+                        className="bg-white border border-[#1B3A34] text-[#1B3A34] px-4 py-2 rounded-lg text-sm font-semibold"
                     >
                         Analytics
                     </Link>
                     <Link
                         href={`/exams/${exam.id}/leaderboard`}
-                        className="bg-white border border-[#1F3864] text-[#1F3864] px-4 py-2 rounded-lg text-sm font-semibold"
+                        className="bg-white border border-[#1B3A34] text-[#1B3A34] px-4 py-2 rounded-lg text-sm font-semibold"
                     >
                         Leaderboard
                     </Link>
                     <Link
                         href={`/exams/${exam.id}/sessions`}
-                        className="bg-[#1F3864] text-white px-4 py-2 rounded-lg text-sm font-semibold"
+                        className="bg-[#1B3A34] text-white px-4 py-2 rounded-lg text-sm font-semibold"
                     >
                         Host a Session →
                     </Link>
@@ -192,7 +191,7 @@ export default function Edit({ exam }) {
                             )}
                         </div>
                         <div className="flex gap-3 text-sm shrink-0 ml-4">
-                            <button onClick={() => startEdit(q)} className="text-[#1F3864] underline">
+                            <button onClick={() => startEdit(q)} className="text-[#1B3A34] underline">
                                 Edit
                             </button>
                             <button onClick={() => deleteQuestion(q)} className="text-red-600 underline">
@@ -333,7 +332,7 @@ export default function Edit({ exam }) {
                             <button
                                 type="button"
                                 onClick={addChoice}
-                                className="mt-2 text-sm text-[#1F3864] underline"
+                                className="mt-2 text-sm text-[#1B3A34] underline"
                             >
                                 + Add {data.type === "matching" ? "pair" : "choice"}
                             </button>
@@ -345,7 +344,7 @@ export default function Edit({ exam }) {
                         <button
                             type="submit"
                             disabled={processing}
-                            className="bg-[#1F3864] text-white px-5 py-2 rounded-lg text-sm font-semibold disabled:opacity-60"
+                            className="bg-[#1B3A34] text-white px-5 py-2 rounded-lg text-sm font-semibold disabled:opacity-60"
                         >
                             {processing ? "Saving…" : editingId ? "Save Question" : "Add Question"}
                         </button>
@@ -365,7 +364,7 @@ export default function Edit({ exam }) {
             ) : (
                 <button
                     onClick={startAdd}
-                    className="w-full border-2 border-dashed border-gray-300 rounded-xl py-4 text-gray-500 hover:border-[#1F3864] hover:text-[#1F3864]"
+                    className="w-full border-2 border-dashed border-gray-300 rounded-xl py-4 text-gray-500 hover:border-[#1B3A34] hover:text-[#1B3A34]"
                 >
                     + Add a Question
                 </button>
@@ -438,7 +437,7 @@ export default function Edit({ exam }) {
                 <button
                     type="submit"
                     disabled={settingsForm.processing}
-                    className="bg-[#1F3864] text-white px-4 py-2 rounded-lg text-sm font-semibold disabled:opacity-60"
+                    className="bg-[#1B3A34] text-white px-4 py-2 rounded-lg text-sm font-semibold disabled:opacity-60"
                 >
                     {settingsForm.processing ? "Saving…" : "Save Settings"}
                 </button>

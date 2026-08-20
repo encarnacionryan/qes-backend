@@ -25,7 +25,7 @@ export default function Browse({ sessions = [] }) {
         <AuthenticatedLayout>
             <Head title="Browse Exams" />
 
-            <h1 className="text-2xl font-bold text-[#1F3864] mb-6">Available Exams</h1>
+            <h1 className="font-display text-3xl font-semibold text-[#1B3A34] mb-6">Available Exams</h1>
 
             {sessions.length === 0 ? (
                 <p className="text-gray-500">
@@ -79,7 +79,7 @@ export default function Browse({ sessions = [] }) {
                                     <button
                                         type="submit"
                                         disabled={processing}
-                                        className="bg-[#1F3864] text-white px-4 py-2 rounded-lg text-sm font-semibold disabled:opacity-60"
+                                        className="bg-[#1B3A34] text-white px-4 py-2 rounded-lg text-sm font-semibold disabled:opacity-60"
                                     >
                                         Join
                                     </button>
@@ -87,7 +87,7 @@ export default function Browse({ sessions = [] }) {
                             ) : session.is_open ? (
                                 <button
                                     onClick={() => attemptJoin(session)}
-                                    className="mt-4 w-full bg-[#1F3864] text-white py-2 rounded-lg text-sm font-semibold"
+                                    className="mt-4 w-full bg-[#1B3A34] text-white py-2 rounded-lg text-sm font-semibold"
                                 >
                                     Join Exam
                                 </button>

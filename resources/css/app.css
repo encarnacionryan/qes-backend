@@ -1,3 +1,61 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+:root {
+    --chalkboard: #1B3A34;
+    --chalkboard-dark: #0F2621;
+    --graphite: #262622;
+    --scantron: #EFF5F0;
+    --paper: #FFFFFF;
+    --grade-red: #C1382C;
+    --chalk-gold: #E0A83E;
+}
+
+body {
+    font-family: "IBM Plex Sans", ui-sans-serif, system-ui, sans-serif;
+    color: var(--graphite);
+    background-color: var(--scantron);
+}
+
+.font-display {
+    font-family: "Fraunces", ui-serif, Georgia, serif;
+}
+
+.font-data {
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-variant-numeric: tabular-nums;
+}
+
+.grade-stamp {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 3px solid currentColor;
+    border-radius: 9999px;
+    padding: 0.4rem 1.1rem;
+    transform: rotate(-8deg);
+    font-family: "Fraunces", ui-serif, serif;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    position: relative;
+}
+
+.grade-stamp::before {
+    content: "";
+    position: absolute;
+    inset: 4px;
+    border: 1px solid currentColor;
+    border-radius: 9999px;
+    opacity: 0.5;
+}
+
+.ruled-paper {
+    background-image: repeating-linear-gradient(
+        to bottom,
+        transparent,
+        transparent 27px,
+        rgba(27, 58, 52, 0.08) 28px
+    );
+}

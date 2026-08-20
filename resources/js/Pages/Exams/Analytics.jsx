@@ -17,11 +17,11 @@ export default function Analytics({ exam, stats }) {
         <AuthenticatedLayout>
             <Head title={`Analytics — ${exam.title}`} />
 
-            <Link href={`/exams/${exam.id}/edit`} className="text-sm text-[#1F3864] underline">
+            <Link href={`/exams/${exam.id}/edit`} className="text-sm text-[#1B3A34] underline">
                 ← Back to {exam.title}
             </Link>
 
-            <h1 className="text-2xl font-bold text-[#1F3864] mt-2 mb-6">Analytics</h1>
+            <h1 className="font-display text-3xl font-semibold text-[#1B3A34] mt-2 mb-6">Analytics</h1>
 
             {submission_count === 0 ? (
                 <p className="text-gray-500">No graded submissions yet — analytics will appear here once students complete this exam.</p>
@@ -45,7 +45,7 @@ export default function Analytics({ exam, stats }) {
                                         {bucket.count > 0 ? bucket.count : ""}
                                     </span>
                                     <div
-                                        className="w-full bg-[#1F3864] rounded-t"
+                                        className="w-full bg-[#1B3A34] rounded-t"
                                         style={{
                                             height: `${(bucket.count / maxBucket) * 100}%`,
                                             minHeight: bucket.count > 0 ? "4px" : "0px",
@@ -63,7 +63,7 @@ export default function Analytics({ exam, stats }) {
                     <section className="bg-white rounded-xl shadow overflow-hidden">
                         <h2 className="font-semibold text-gray-700 px-5 pt-5">Per-Question Performance</h2>
                         <table className="w-full text-sm mt-3">
-                            <thead className="bg-gray-50 text-gray-500 text-xs uppercase tracking-wide">
+                            <thead className="bg-[#EFF5F0] text-gray-500 text-xs uppercase tracking-wide">
                                 <tr>
                                     <th className="text-left px-5 py-2">Question</th>
                                     <th className="text-left px-5 py-2">Type</th>

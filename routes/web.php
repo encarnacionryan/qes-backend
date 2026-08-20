@@ -18,7 +18,7 @@ Route::middleware('guest')->group(function () {
     Route::get('/login', [AuthController::class, 'create'])->name('login');
     Route::post('/login', [AuthController::class, 'store']);           
     Route::get('/register', [AuthController::class, 'showRegister']);
-    Route::post('/register', [AuthController::class, 'register']);    
+    Route::post('/register', [AuthController::class, 'register']);     
 });
 
 Route::middleware('auth')->group(function () {
@@ -27,6 +27,7 @@ Route::middleware('auth')->group(function () {
 
 Route::middleware(['auth', 'role:teacher'])->group(function () {
     Route::get('/dashboard', DashboardController::class)->name('dashboard');
+
     Route::resource('classes', SchoolClassController::class)
         ->except(['show'])
         ->parameters(['classes' => 'schoolClass']);
@@ -37,8 +38,10 @@ Route::middleware(['auth', 'role:teacher'])->group(function () {
         ->name('classes.archive'); 
     Route::post('classes/{schoolClass}/import-students', [SchoolClassController::class, 'importStudents'])
         ->name('classes.import-students');
+
     Route::resource('exams', ExamController::class);
-    Route::post('exams/{exam}/duplicate', [ExamController::class, 'duplicate'])->name('exams.duplicate');
+    Route::post('exams/{exam}/duplicate', [ExamController::class, 'duplicate'])->name('exams.duplicate'); 
+
     Route::post('exams/{exam}/questions', [\App\Http\Controllers\Web\QuestionController::class, 'store'])
         ->name('questions.store');
     Route::put('exams/{exam}/questions/{question}', [\App\Http\Controllers\Web\QuestionController::class, 'update'])
@@ -47,12 +50,14 @@ Route::middleware(['auth', 'role:teacher'])->group(function () {
         ->name('questions.destroy');
     Route::post('exams/{exam}/questions/reorder', [\App\Http\Controllers\Web\QuestionController::class, 'reorder'])
         ->name('questions.reorder');
+
     Route::get('exams/{exam}/sessions', [\App\Http\Controllers\Web\ExamSessionController::class, 'index'])
         ->name('sessions.index');
     Route::post('exams/{exam}/sessions', [\App\Http\Controllers\Web\ExamSessionController::class, 'store'])
         ->name('sessions.store');
     Route::post('sessions/{examSession}/close', [\App\Http\Controllers\Web\ExamSessionController::class, 'close'])
         ->name('sessions.close');
+
     Route::get('exams/{exam}/leaderboard', [ExamController::class, 'leaderboard'])->name('exams.leaderboard');
     Route::get('exams/{exam}/gradebook.csv', [ExamController::class, 'exportGradebook'])->name('exams.export-gradebook');
     Route::get('exams/{exam}/analytics', [ExamController::class, 'analytics'])->name('exams.analytics');
@@ -75,7 +80,10 @@ Route::middleware(['auth', 'role:student'])->prefix('student')->name('student.')
 
     Route::get('/exams/{exam}/leaderboard', [\App\Http\Controllers\Web\Student\LeaderboardController::class, 'show'])
         ->name('exams.leaderboard'); 
-});
+
+    Route::get('/progress', [\App\Http\Controllers\Web\Student\ProgressController::class, 'index'])
+        ->name('progress'); 
+    });
 
 Route::middleware(['auth', 'role:teacher', 'lead_teacher'])->prefix('admin')->group(function () {
     Route::get('/teachers', [\App\Http\Controllers\Web\Admin\TeacherAdminController::class, 'index'])

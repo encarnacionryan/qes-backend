@@ -14,10 +14,10 @@ export default function Index({ classes = [] }) {
             <Head title="Classes" />
 
             <div className="flex items-center justify-between mb-6">
-                <h1 className="text-2xl font-bold text-[#1F3864]">Your Classes</h1>
+                <h1 className="font-display text-3xl font-semibold text-[#1B3A34]">Your Classes</h1>
                 <Link
                     href="/classes/create"
-                    className="bg-[#1F3864] text-white px-4 py-2 rounded-lg text-sm font-semibold"
+                    className="bg-[#1B3A34] text-white px-4 py-2 rounded-lg text-sm font-semibold"
                 >
                     + New Class
                 </Link>
@@ -28,7 +28,7 @@ export default function Index({ classes = [] }) {
                     <p className="text-gray-500 mb-4">You haven't created any classes yet.</p>
                     <Link
                         href="/classes/create"
-                        className="text-[#1F3864] underline font-medium"
+                        className="text-[#1B3A34] underline font-medium"
                     >
                         Create your first class
                     </Link>
@@ -61,16 +61,16 @@ export default function Index({ classes = [] }) {
                                 <span className="text-gray-500">
                                     {c.students_count ?? 0} students
                                 </span>
-                                <span className="font-mono bg-gray-100 px-2 py-1 rounded text-[#1F3864]">
+                                <span className="font-mono bg-gray-100 px-2 py-1 rounded text-[#1B3A34]">
                                     {c.join_code}
                                 </span>
                             </div>
 
                             <div className="mt-4 flex gap-3 text-sm">
-                                <Link href={`/classes/${c.id}`} className="text-[#1F3864] underline">
+                                <Link href={`/classes/${c.id}`} className="text-[#1B3A34] underline">
                                     View roster
                                 </Link>
-                                <Link href={`/classes/${c.id}/edit`} className="text-[#1F3864] underline">
+                                <Link href={`/classes/${c.id}/edit`} className="text-[#1B3A34] underline">
                                     Edit
                                 </Link>
                                 {!c.is_archived && (

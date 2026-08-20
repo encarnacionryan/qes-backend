@@ -7,17 +7,17 @@ export default function Dashboard({ classes = [], exams = [] }) {
             <Head title="Dashboard" />
 
             <div className="flex items-center justify-between mb-6">
-                <h1 className="text-2xl font-bold text-[#1F3864]">Dashboard</h1>
+                <h1 className="font-display text-3xl font-semibold text-[#1B3A34]">Dashboard</h1>
                 <div className="flex gap-3">
                     <Link
                         href="/classes/create"
-                        className="bg-white border border-[#1F3864] text-[#1F3864] px-4 py-2 rounded-lg text-sm font-semibold"
+                        className="bg-white border border-[#1B3A34] text-[#1B3A34] px-4 py-2 rounded-lg text-sm font-semibold"
                     >
                         + New Class
                     </Link>
                     <Link
                         href="/exams/create"
-                        className="bg-[#1F3864] text-white px-4 py-2 rounded-lg text-sm font-semibold"
+                        className="bg-[#1B3A34] text-white px-4 py-2 rounded-lg text-sm font-semibold"
                     >
                         + New Exam
                     </Link>
@@ -30,7 +30,7 @@ export default function Dashboard({ classes = [], exams = [] }) {
                     {classes.length === 0 ? (
                         <p className="text-sm text-gray-400">
                             No classes yet.{" "}
-                            <Link href="/classes/create" className="text-[#1F3864] underline">
+                            <Link href="/classes/create" className="text-[#1B3A34] underline">
                                 Create one
                             </Link>
                             .
@@ -64,7 +64,7 @@ export default function Dashboard({ classes = [], exams = [] }) {
                     {exams.length === 0 ? (
                         <p className="text-sm text-gray-400">
                             No exams yet.{" "}
-                            <Link href="/exams/create" className="text-[#1F3864] underline">
+                            <Link href="/exams/create" className="text-[#1B3A34] underline">
                                 Create one
                             </Link>
                             .
@@ -84,7 +84,7 @@ export default function Dashboard({ classes = [], exams = [] }) {
                                     </div>
                                     <Link
                                         href={`/exams/${exam.id}/sessions`}
-                                        className="text-sm text-[#1F3864] underline"
+                                        className="text-sm text-[#1B3A34] underline"
                                     >
                                         Host session
                                     </Link>

@@ -4,11 +4,11 @@ const MEDALS = { 1: "🥇", 2: "🥈", 3: "🥉" };
 
 export default function Leaderboard({ exam, entries = [], myStudentId }) {
     return (
-        <div className="min-h-screen bg-gray-50 px-4 py-8">
+        <div className="min-h-screen bg-[#EFF5F0] px-4 py-8">
             <Head title={`Leaderboard — ${exam.title}`} />
 
             <div className="max-w-lg mx-auto">
-                <h1 className="text-2xl font-bold text-[#1F3864] mb-1">{exam.title}</h1>
+                <h1 className="font-display text-3xl font-semibold text-[#1B3A34] mb-1">{exam.title}</h1>
                 <p className="text-sm text-gray-500 mb-6">Leaderboard</p>
 
                 <div className="bg-white rounded-xl shadow overflow-hidden mb-4">
@@ -25,7 +25,7 @@ export default function Leaderboard({ exam, entries = [], myStudentId }) {
                                     <span className="w-8 text-sm font-semibold text-gray-600">
                                         {MEDALS[entry.rank] || `#${entry.rank}`}
                                     </span>
-                                    <span className={`text-sm ${isMe ? "font-semibold text-[#1F3864]" : "text-gray-700"}`}>
+                                    <span className={`text-sm ${isMe ? "font-semibold text-[#1B3A34]" : "text-gray-700"}`}>
                                         {entry.student.name}
                                         {isMe && " (you)"}
                                     </span>
@@ -38,7 +38,7 @@ export default function Leaderboard({ exam, entries = [], myStudentId }) {
 
                 <Link
                     href="/student/sessions"
-                    className="block text-center bg-white border border-[#1F3864] text-[#1F3864] py-2 rounded-lg text-sm font-semibold"
+                    className="block text-center bg-white border border-[#1B3A34] text-[#1B3A34] py-2 rounded-lg text-sm font-semibold"
                 >
                     Back to Available Exams
                 </Link>

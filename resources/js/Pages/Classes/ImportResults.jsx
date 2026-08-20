@@ -16,11 +16,11 @@ export default function ImportResults({ class: schoolClass, created = [], enroll
         <AuthenticatedLayout>
             <Head title="Import Results" />
 
-            <Link href={`/classes/${schoolClass.id}`} className="text-sm text-[#1F3864] underline">
+            <Link href={`/classes/${schoolClass.id}`} className="text-sm text-[#1B3A34] underline">
                 ← Back to {schoolClass.name}
             </Link>
 
-            <h1 className="text-2xl font-bold text-[#1F3864] mt-2 mb-6">Import Results</h1>
+            <h1 className="font-display text-3xl font-semibold text-[#1B3A34] mt-2 mb-6">Import Results</h1>
 
             <div className="grid grid-cols-3 gap-4 mb-6">
                 <div className="bg-white rounded-xl shadow p-4">
@@ -29,7 +29,7 @@ export default function ImportResults({ class: schoolClass, created = [], enroll
                 </div>
                 <div className="bg-white rounded-xl shadow p-4">
                     <p className="text-xs text-gray-400 uppercase tracking-wide">Existing, Enrolled</p>
-                    <p className="text-2xl font-bold text-[#1F3864]">{enrolled.length}</p>
+                    <p className="font-display text-3xl font-semibold text-[#1B3A34]">{enrolled.length}</p>
                 </div>
                 <div className="bg-white rounded-xl shadow p-4">
                     <p className="text-xs text-gray-400 uppercase tracking-wide">Skipped</p>
@@ -52,7 +52,7 @@ export default function ImportResults({ class: schoolClass, created = [], enroll
                     </div>
                     <div className="bg-white rounded-lg overflow-hidden">
                         <table className="w-full text-sm">
-                            <thead className="bg-gray-50 text-gray-500 text-xs uppercase tracking-wide">
+                            <thead className="bg-[#EFF5F0] text-gray-500 text-xs uppercase tracking-wide">
                                 <tr>
                                     <th className="text-left px-4 py-2">Name</th>
                                     <th className="text-left px-4 py-2">Email</th>
